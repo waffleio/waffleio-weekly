@@ -1,0 +1,24 @@
+{
+  "name": "waffleio-weekly",
+  "version": "0.0.1",
+  "description": "A weekly report of what your team has accomplished in Waffle.io!",
+  "main": "app.js",
+  "scripts": {
+    "start": "node app.js",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/adamzolyak/wafflebotimpact.git"
+  },
+  "author": "Adam Zolyak",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/adamzolyak/wafflebotimpact/issues"
+  },
+  "homepage": "https://github.com/adamzolyak/wafflebotimpact#readme",
+  "dependencies": {
+    "axios": "^0.18.0",
+    "moment": "^2.22.2"
+  }
+}
