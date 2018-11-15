@@ -4,7 +4,7 @@
   "description": "A weekly report of what your team has accomplished in Waffle.io!",
   "main": "app.js",
   "scripts": {
-    "start": "node app.js",
+    "start": "bash dev",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "repository": {

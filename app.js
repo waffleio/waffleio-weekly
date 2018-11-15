@@ -3,9 +3,9 @@ const moment = require('moment');
 
 axios.defaults.headers.common['Authorization'] = 'bearer ' + process.env.waffleApiSecret
 
-//const waffleProjectId = '5be5aab3b10da50134293eea' // https://waffle.io/adamzolyak/test-letswafflebot
-const waffleProjectId = '52e041cfe045b8ac35fe4620' // https://waffle.io/waffleio/waffle.io
+const waffleProjectId = process.env.waffleProjectId
 
+console.log(waffleProjectId)
 
 const todaysDate = moment().format('YYYY-MM-DD')
 const todaysDateRaw = moment()
