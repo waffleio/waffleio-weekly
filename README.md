@@ -1,6 +1,6 @@
 # 📆 Waffle Weekly
 
-A lightweight report of weekly progress for Waffle.io projects (boards).
+A report of weekly progress for Waffle.io projects (boards).
 
 ## Overview
 

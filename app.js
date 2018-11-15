@@ -91,7 +91,7 @@ function addOrphanPropertyToIssues(issues) {
 }
 
 async function generateEpicStatus(epicIssues) {
-    let epicStatus = 'EPICS'
+    let epicStatus = 'EPICS '
     
     epicIssues.forEach(epic => {
         epicStatus += '\n\n   EPIC:' + epic.githubMetadata.title
