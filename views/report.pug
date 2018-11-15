@@ -1,0 +1,11 @@
+html
+    head
+        title=title
+        style
+            include style.css
+    body    
+        h1=message
+        ul
+            each val, index in epics
+                li Epic: #{val.githubMetadata.title} (##{val.githubMetadata.number}) #{val.githubMetadata.state.toUpperCase()} #{epicLink} 
+        a(href='google.com') Google
