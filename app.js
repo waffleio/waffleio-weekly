@@ -19,27 +19,6 @@ const reportSinceDateRaw = todaysDateRaw - (60 * 1000 * 60 * 24 * 7) // since 1 
 
 const http = require('http')
 
-app.get('/raw', (req, res) => {
-    
-    
-    generateStatusReport() 
-    .then(statusReport => {
-        res.write(statusReport)
-        res.end()
-    })   
-})
-
-app.get('/', (req, res) => {
-    generateStatusReport2()
-    .then(epicIssues => {
-        res.render('report', {
-            title: "Waffle.io Progress Report",
-            message: "Waffle.io Progress Report",
-            epics: epicIssues
-        })
-    })  
-})
-
 async function getProject(id) {
     const response = await axios.get(`https://api.waffle.io/project/${id}`)
     return response.data
@@ -50,158 +29,110 @@ async function getIssuesForProject(id) {
     return response.data
 }
 
-function addEpicPropertyToIssues(issues) {
+async function getEpicIssues(issues) {
+    let issueSubset = issues.filter(issue => issue.isEpic === true)
+    return issueSubset 
+}
+
+async function getUpdatedOrphanIssues(issues) {
+    let issueSubset = issues.filter(issue => issue.isChild === true)
+    issueSubset = issueSubset.filter(issue => Date.parse(issue.githubMetadata.updated_at) > reportSinceDateRaw)
+    issueSubset = issueSubset.filter(issue => issue.isEpic === false)
+    return issueSubset 
+}
+
+async function getClosedIssues(issues) {
+    let issueSubset = issues.filter(issue => Date.parse(issue.githubMetadata.closed_at) > reportSinceDateRaw)
+    issueSubset = issueSubset.filter(issue => issue.githubMetadata.state === 'closed')
+    return issueSubset 
+}
+
+async function getNewIssues(issues) {
+
+    let issueSubset = issues.filter(issue => Date.parse(issue.githubMetadata.created_at) > reportSinceDateRaw)
+    return issueSubset 
+}
+
+function checkIfEpic(issue) {   
+
+    let isEpic = false
+
+    if(issue.relationships) {
+        isEpic = issue.relationships.some(issueRelationship => {
+            
+            if (issueRelationship.relationship === 'parent') {
+                return true
+            }      
+        })
+    } 
+
+    return isEpic
+}
+
+function checkIfEpicInProgress(issue) {
     
-    issues.forEach(issue => {
-        
-        if(issue.relationships) {
-            let isEpic = issue.relationships.some(issueRelationship => {
+    let isEpicInProgress = false
+
+    if(issue.isEpic === true) {
+
+        if(issue.githubMetadata.labels) {
+            isEpicInProgress = issue.githubMetadata.labels.some(label => {
                 
-                if (issueRelationship.relationship === 'parent') {
+                if (label.name === 'waffle:in progress') {
                     return true
                 } 
-                
             })
-
-            if(isEpic) {
-                issue.isEpic = true
-            } else {
-                issue.isEpic = false
-            }
-        } 
-
-        if(issue.isEpic === true) {
-
-            if(issue.githubMetadata.labels) {
-                let isEpicInProgress = issue.githubMetadata.labels.some(label => {
-                    
-                    if (label.name === 'waffle:in progress') {
-                        return true
-                    } 
-
-                })
-
-                if(isEpicInProgress) {
-                    issue.isEpicInProgress = true
-                } else {
-                    issue.isEpicInProgress = false
-                }
-            }
         }
-    })
+    }
+
+    return isEpicInProgress
 }
 
-function addChildPropertyToIssues(issues) {
-      
-    issues.forEach(issue => {
-        if(issue.relationships) {
-            let isChild = issue.relationships.some(issueRelationship => {
-                
-                if (issueRelationship.relationship === 'child') {
-                    return true
-                }
+function checkIfChild(issue) {
+    let isChild = false
     
-            })
-            if(isChild) {
-                issue.isChild = true
-            } else {
-                issue.isChild = false
-            }
-        }
-    })
-}
-
-async function generateEpicStatus(epicIssues) {
-    let epicStatus = 'EPICS (in progress)'
-    
-    epicIssues.forEach(epic => {
-        epicStatus += '\n\n   EPIC:' + epic.githubMetadata.title
-
-        epicStatus += '\n\n      OPEN ISSUES in EPIC'
-
-        epic.relationships.forEach(issueRelationship => {
-            if(issueRelationship.relationship === 'parent') {
-                if(issueRelationship.to.githubMetadata.state === 'open') {
-                    epicStatus += `\n         * "${issueRelationship.to.githubMetadata.title}" is ${issueRelationship.to.githubMetadata.state.toUpperCase()}`
-                }
-            }
-        })
-
-        epicStatus += '\n\n      CLOSED ISSUES in EPIC'
-
-        epic.relationships.forEach(issueRelationship => {
-            if(issueRelationship.relationship === 'parent') {
-                if(issueRelationship.to.githubMetadata.state === 'closed') {
-                    epicStatus += `\n         * "${issueRelationship.to.githubMetadata.title}" is ${issueRelationship.to.githubMetadata.state.toUpperCase()}`
-                }
-            }
-        })
-    })
-
-    return epicStatus
-}
-
-async function generateOrphanStatus(orphanIssues) {
-    let orphanStatus = 'ISSUES (without parents)'
-    
-    orphanStatus += '\n\n   ISSUES (in progress)'
-    orphanStatus += '\n\n      TODO: not implemented'
-
-    orphanStatus += '\n\n   NEW ISSUES'
-    orphanIssues.forEach(issue => {
-        if(issue.githubMetadata.state === 'open') {
-            if(Date.parse(issue.githubMetadata.created_at) > reportSinceDateRaw) {
-                orphanStatus += `\n     * "${issue.githubMetadata.title}" is ${issue.githubMetadata.state.toUpperCase()}`
-            }
-        }  
-    })
-
-    orphanStatus += '\n\n   CLOSED ISSUES'
-    orphanIssues.forEach(issue => {
-        if(issue.githubMetadata.state === 'closed') {
-            if(Date.parse(issue.githubMetadata.closed_at) > reportSinceDateRaw) {
-                orphanStatus += `\n     * "${issue.githubMetadata.title}" is ${issue.githubMetadata.state.toUpperCase()}`
-            }
-        }  
-    })
-
-    return orphanStatus
-}
-
-async function generateStatusReport() {
+    if(issue.relationships) {
+        isChild = issue.relationships.some(issueRelationship => {
             
-            let project = await getProject(waffleProjectId)
+            if (issueRelationship.relationship === 'child') {
+                return true
+            }
 
-            let issues = await getIssuesForProject(project._id)
+        })
+    }
 
-            await addEpicPropertyToIssues(issues)
-            const epicIssuesInProgress = issues.filter(issue => issue.isEpicInProgress === true)
-            const epicStatus = await generateEpicStatus(epicIssuesInProgress)
-
-            await addChildPropertyToIssues(issues)
-            const orphanIssues = issues.filter(issue => issue.isChild === false)
-            const orphinStatus = await generateOrphanStatus(orphanIssues)
-
-            const statusReport = 'Waffle.io Progress Report\n' 
-                                    + `for ${project.name}\n\n`
-                                    + epicStatus 
-                                    + '\n\n' 
-                                    + orphinStatus
-
-            return statusReport
+    return isChild
 }
 
-async function generateStatusReport2() {
-            
+async function ornamentIssues(issue) {
+
+    issue.isEpic = checkIfEpic(issue)
+    issue.isEpicInProgress = checkIfEpicInProgress(issue)
+    issue.isChild = checkIfChild(issue)
+
+    return issue
+}
+
+app.get('/', async (req, res) => {
     let project = await getProject(waffleProjectId)
-
     let issues = await getIssuesForProject(project._id)
+    await issues.map(ornamentIssues)
 
-    await addEpicPropertyToIssues(issues)
-    const epicIssues = issues.filter(issue => issue.isEpic === true)
-    
-    return epicIssues
-}
+    res.render('report', {
+        title: "Waffle.io Progress Report",
+        message: "Waffle.io Progress Report",
+        project: project.name,
+        epics: await getEpicIssues(issues),
+        newOrphanIssues: await getNewIssues(issues),
+        updatedOrphanIssues: await getUpdatedOrphanIssues(issues),
+        closedOrphanIssues: await getClosedIssues(issues)
+    }) 
+})
 
 app.listen(3000)
 console.log('listening on port 3000...')
+
+module.exports.isEpic = checkIfEpic
+module.exports.isEpicInProgress = checkIfEpicInProgress
+module.exports.isChild = checkIfChild
+module.exports.ornamentIssues = ornamentIssues

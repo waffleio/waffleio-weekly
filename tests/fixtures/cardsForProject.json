@@ -1,0 +1,329 @@
+[
+    {
+        "_id": "5bef3ebae127e70153fa4c60",
+        "__v": 1,
+        "githubMetadata": {
+            "closed_at": "1970-01-01T00:00:00.000Z",
+            "comments": 0,
+            "created_at": "2018-11-16T22:03:37.000Z",
+            "html_url": "https://github.com/adamzolyak/test-data/issues/4",
+            "id": 381776638,
+            "number": 4,
+            "state": "open",
+            "title": "child C",
+            "updated_at": "2018-11-16T22:04:12.000Z",
+            "url": "https://api.github.com/repos/adamzolyak/test-data/issues/4",
+            "source": "5bef3e8890877e0219c79477",
+            "labels": [
+                {
+                    "color": "ededed",
+                    "name": "to do"
+                }
+            ],
+            "assignees": []
+        },
+        "relationships": [
+            {
+                "_id": "5bef3ebae127e70153fa4c61",
+                "relationship": "child",
+                "to": {
+                    "_id": "5bef3ea6c83ca202b1ac7e54",
+                    "__v": 1,
+                    "githubMetadata": {
+                        "closed_at": "1970-01-01T00:00:00.000Z",
+                        "comments": 0,
+                        "created_at": "2018-11-16T22:03:17.000Z",
+                        "html_url": "https://github.com/adamzolyak/test-data/issues/1",
+                        "id": 381776534,
+                        "number": 1,
+                        "state": "open",
+                        "title": "Epic A",
+                        "updated_at": "2018-11-16T22:04:05.000Z",
+                        "url": "https://api.github.com/repos/adamzolyak/test-data/issues/1",
+                        "source": "5bef3e8890877e0219c79477",
+                        "labels": [
+                            {
+                                "color": "e6e6e6",
+                                "name": "waffle:in progress"
+                            }
+                        ],
+                        "assignees": []
+                    },
+                    "id": "5bef3ea6c83ca202b1ac7e54"
+                },
+                "__v": 0
+            }
+        ],
+        "id": "5bef3ebae127e70153fa4c60"
+    },
+    {
+        "_id": "5bef3eb0a6302e0219618d3b",
+        "__v": 0,
+        "githubMetadata": {
+            "closed_at": "2018-11-16T22:04:09.000Z",
+            "comments": 0,
+            "created_at": "2018-11-16T22:03:28.000Z",
+            "html_url": "https://github.com/adamzolyak/test-data/issues/2",
+            "id": 381776583,
+            "number": 2,
+            "state": "closed",
+            "title": "child A",
+            "updated_at": "2018-11-16T22:04:09.000Z",
+            "url": "https://api.github.com/repos/adamzolyak/test-data/issues/2",
+            "source": "5bef3e8890877e0219c79477",
+            "labels": [],
+            "assignees": []
+        },
+        "relationships": [
+            {
+                "_id": "5bef3eb0a6302e0219618d3c",
+                "relationship": "child",
+                "to": {
+                    "_id": "5bef3ea6c83ca202b1ac7e54",
+                    "__v": 1,
+                    "githubMetadata": {
+                        "closed_at": "1970-01-01T00:00:00.000Z",
+                        "comments": 0,
+                        "created_at": "2018-11-16T22:03:17.000Z",
+                        "html_url": "https://github.com/adamzolyak/test-data/issues/1",
+                        "id": 381776534,
+                        "number": 1,
+                        "state": "open",
+                        "title": "Epic A",
+                        "updated_at": "2018-11-16T22:04:05.000Z",
+                        "url": "https://api.github.com/repos/adamzolyak/test-data/issues/1",
+                        "source": "5bef3e8890877e0219c79477",
+                        "labels": [
+                            {
+                                "color": "e6e6e6",
+                                "name": "waffle:in progress"
+                            }
+                        ],
+                        "assignees": []
+                    },
+                    "id": "5bef3ea6c83ca202b1ac7e54"
+                },
+                "__v": 0
+            }
+        ],
+        "id": "5bef3eb0a6302e0219618d3b"
+    },
+    {
+        "_id": "5bef3ed3a49dcf0205cc799d",
+        "__v": 0,
+        "githubMetadata": {
+            "closed_at": "2018-11-16T22:04:14.000Z",
+            "comments": 0,
+            "created_at": "2018-11-16T22:04:03.000Z",
+            "html_url": "https://github.com/adamzolyak/test-data/issues/6",
+            "id": 381776752,
+            "number": 6,
+            "state": "closed",
+            "title": "2nd orphan",
+            "updated_at": "2018-11-16T22:04:14.000Z",
+            "url": "https://api.github.com/repos/adamzolyak/test-data/issues/6",
+            "source": "5bef3e8890877e0219c79477",
+            "labels": [],
+            "assignees": []
+        },
+        "relationships": [],
+        "id": "5bef3ed3a49dcf0205cc799d"
+    },
+    {
+        "_id": "5bef3ea6c83ca202b1ac7e54",
+        "__v": 1,
+        "githubMetadata": {
+            "closed_at": "1970-01-01T00:00:00.000Z",
+            "comments": 0,
+            "created_at": "2018-11-16T22:03:17.000Z",
+            "html_url": "https://github.com/adamzolyak/test-data/issues/1",
+            "id": 381776534,
+            "number": 1,
+            "state": "open",
+            "title": "Epic A",
+            "updated_at": "2018-11-16T22:04:05.000Z",
+            "url": "https://api.github.com/repos/adamzolyak/test-data/issues/1",
+            "source": "5bef3e8890877e0219c79477",
+            "labels": [
+                {
+                    "color": "e6e6e6",
+                    "name": "waffle:in progress"
+                }
+            ],
+            "assignees": []
+        },
+        "relationships": [
+            {
+                "_id": "5bef3eb0a6302e0219618d3c",
+                "relationship": "parent",
+                "to": {
+                    "_id": "5bef3eb0a6302e0219618d3b",
+                    "__v": 0,
+                    "githubMetadata": {
+                        "closed_at": "2018-11-16T22:04:09.000Z",
+                        "comments": 0,
+                        "created_at": "2018-11-16T22:03:28.000Z",
+                        "html_url": "https://github.com/adamzolyak/test-data/issues/2",
+                        "id": 381776583,
+                        "number": 2,
+                        "state": "closed",
+                        "title": "child A",
+                        "updated_at": "2018-11-16T22:04:09.000Z",
+                        "url": "https://api.github.com/repos/adamzolyak/test-data/issues/2",
+                        "source": "5bef3e8890877e0219c79477",
+                        "labels": [],
+                        "assignees": []
+                    },
+                    "id": "5bef3eb0a6302e0219618d3b"
+                },
+                "__v": 0
+            },
+            {
+                "_id": "5bef3eb58d7c4101b546cf95",
+                "relationship": "parent",
+                "to": {
+                    "_id": "5bef3eb58d7c4101b546cf94",
+                    "__v": 3,
+                    "archived": false,
+                    "githubMetadata": {
+                        "closed_at": "1970-01-01T00:00:00.000Z",
+                        "comments": 0,
+                        "created_at": "2018-11-16T22:03:33.000Z",
+                        "html_url": "https://github.com/adamzolyak/test-data/issues/3",
+                        "id": 381776609,
+                        "number": 3,
+                        "state": "open",
+                        "title": "child B",
+                        "updated_at": "2018-11-16T22:04:18.000Z",
+                        "url": "https://api.github.com/repos/adamzolyak/test-data/issues/3",
+                        "source": "5bef3e8890877e0219c79477",
+                        "labels": [
+                            {
+                                "color": "e6e6e6",
+                                "name": "waffle:in progress"
+                            }
+                        ],
+                        "assignees": []
+                    },
+                    "id": "5bef3eb58d7c4101b546cf94"
+                },
+                "__v": 0
+            },
+            {
+                "_id": "5bef3ebae127e70153fa4c61",
+                "relationship": "parent",
+                "to": {
+                    "_id": "5bef3ebae127e70153fa4c60",
+                    "__v": 1,
+                    "githubMetadata": {
+                        "closed_at": "1970-01-01T00:00:00.000Z",
+                        "comments": 0,
+                        "created_at": "2018-11-16T22:03:37.000Z",
+                        "html_url": "https://github.com/adamzolyak/test-data/issues/4",
+                        "id": 381776638,
+                        "number": 4,
+                        "state": "open",
+                        "title": "child C",
+                        "updated_at": "2018-11-16T22:04:12.000Z",
+                        "url": "https://api.github.com/repos/adamzolyak/test-data/issues/4",
+                        "source": "5bef3e8890877e0219c79477",
+                        "labels": [
+                            {
+                                "color": "ededed",
+                                "name": "to do"
+                            }
+                        ],
+                        "assignees": []
+                    },
+                    "id": "5bef3ebae127e70153fa4c60"
+                },
+                "__v": 0
+            }
+        ],
+        "id": "5bef3ea6c83ca202b1ac7e54"
+    },
+    {
+        "_id": "5bef3eccb9dccf024b9faf24",
+        "__v": 1,
+        "githubMetadata": {
+            "closed_at": "1970-01-01T00:00:00.000Z",
+            "comments": 0,
+            "created_at": "2018-11-16T22:03:55.000Z",
+            "html_url": "https://github.com/adamzolyak/test-data/issues/5",
+            "id": 381776715,
+            "number": 5,
+            "state": "open",
+            "title": "1st orphan",
+            "updated_at": "2018-11-16T22:04:16.000Z",
+            "url": "https://api.github.com/repos/adamzolyak/test-data/issues/5",
+            "source": "5bef3e8890877e0219c79477",
+            "labels": [
+                {
+                    "color": "e6e6e6",
+                    "name": "waffle:in progress"
+                }
+            ],
+            "assignees": []
+        },
+        "relationships": [],
+        "id": "5bef3eccb9dccf024b9faf24"
+    },
+    {
+        "_id": "5bef3eb58d7c4101b546cf94",
+        "__v": 3,
+        "archived": false,
+        "githubMetadata": {
+            "closed_at": "1970-01-01T00:00:00.000Z",
+            "comments": 0,
+            "created_at": "2018-11-16T22:03:33.000Z",
+            "html_url": "https://github.com/adamzolyak/test-data/issues/3",
+            "id": 381776609,
+            "number": 3,
+            "state": "open",
+            "title": "child B",
+            "updated_at": "2018-11-16T22:04:18.000Z",
+            "url": "https://api.github.com/repos/adamzolyak/test-data/issues/3",
+            "source": "5bef3e8890877e0219c79477",
+            "labels": [
+                {
+                    "color": "e6e6e6",
+                    "name": "waffle:in progress"
+                }
+            ],
+            "assignees": []
+        },
+        "relationships": [
+            {
+                "_id": "5bef3eb58d7c4101b546cf95",
+                "relationship": "child",
+                "to": {
+                    "_id": "5bef3ea6c83ca202b1ac7e54",
+                    "__v": 1,
+                    "githubMetadata": {
+                        "closed_at": "1970-01-01T00:00:00.000Z",
+                        "comments": 0,
+                        "created_at": "2018-11-16T22:03:17.000Z",
+                        "html_url": "https://github.com/adamzolyak/test-data/issues/1",
+                        "id": 381776534,
+                        "number": 1,
+                        "state": "open",
+                        "title": "Epic A",
+                        "updated_at": "2018-11-16T22:04:05.000Z",
+                        "url": "https://api.github.com/repos/adamzolyak/test-data/issues/1",
+                        "source": "5bef3e8890877e0219c79477",
+                        "labels": [
+                            {
+                                "color": "e6e6e6",
+                                "name": "waffle:in progress"
+                            }
+                        ],
+                        "assignees": []
+                    },
+                    "id": "5bef3ea6c83ca202b1ac7e54"
+                },
+                "__v": 0
+            }
+        ],
+        "id": "5bef3eb58d7c4101b546cf94"
+    }
+]

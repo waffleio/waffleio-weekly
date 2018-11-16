@@ -5,6 +5,21 @@ html
             include style.css
     body    
         h1=message
-        ul
-            each val, index in epics
-                li Epic: #{val.githubMetadata.title} (##{val.githubMetadata.number}) #{val.githubMetadata.state.toUpperCase()} #{epicLink} #[a(href='google.com') Google]
+        p for #{project}
+        p for past 7 days
+            h2 Epics 🗂
+            ul
+                each val, index in epics
+                    li #[a(href=val.githubMetadata.html_url) ##{val.githubMetadata.number}]  #{val.githubMetadata.title} #{val.githubMetadata.state.toUpperCase()}
+            h2 Updated Issues (without Epic) 🏃 
+            ul
+                each val, index in updatedOrphanIssues
+                    li #[a(href=val.githubMetadata.html_url) ##{val.githubMetadata.number}]  #{val.githubMetadata.title} #{val.githubMetadata.state.toUpperCase()} updated at #{val.githubMetadata.updated_at}
+            h2 Closed Issues 💪 
+            ul
+                each val, index in closedOrphanIssues
+                    li #[a(href=val.githubMetadata.html_url) ##{val.githubMetadata.number}]  #{val.githubMetadata.title} #{val.githubMetadata.state.toUpperCase()} closed at #{val.githubMetadata.closed_at}
+            h2 New Issues ⭐ 
+            ul
+                each val, index in newOrphanIssues
+                    li #[a(href=val.githubMetadata.html_url) ##{val.githubMetadata.number}]  #{val.githubMetadata.title} #{val.githubMetadata.state.toUpperCase()} created at #{val.githubMetadata.created_at}
