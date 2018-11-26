@@ -10,15 +10,9 @@ Waffle Weekly is a project to explore possible future functionality to provide a
 
 ## Roadmap
 
-Potential future additions:
+This project uses Waffle.io to manage our [backlog and in-progress work](https://waffle.io/waffleio/waffleio-weekly).  
 
-* HTML formatting
-* Ability to select a Waffle board for the report.
-* Ability to manage the Waffle.io API key used for the report. 
-* Ability to setup a recurring Waffle Weekly to be send via email.
-* Ability to setup email delivery on a daily, weekly, and/or monthly basis.
-* Ability to manage email recipients to recieve the report.
-* Additional metadata (assingees, column, labels, etc).
+[![Waffle.io - Columns and their card count](https://badge.waffle.io/waffleio/waffleio-weekly.svg?columns=all)](https://waffle.io/waffleio/waffleio-weekly)
 
 ## How It Works
 
