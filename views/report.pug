@@ -7,19 +7,27 @@ html
         h1=message
         p for #{project}
         p for past 7 days
-            h2 Epics 🗂
+            h2 Epics (in progress) 🗂
             ul
-                each val, index in epics
-                    li #[a(href=val.githubMetadata.html_url) ##{val.githubMetadata.number}]  #{val.githubMetadata.title} #{val.githubMetadata.state.toUpperCase()}
-            h2 Updated Issues (without Epic) 🏃 
+                each epic in epics
+                    - let commentsString = (epic.newComments > 0) ? '(' + epic.newComments + ' new comments)' : ''
+                    li #[a(href=epic.githubMetadata.html_url) ##{epic.githubMetadata.number}]  #{epic.githubMetadata.title} #{epic.githubMetadata.state.toUpperCase()} #{commentsString}
+                        ul 
+                            each child in epic.relationships
+                                - let commentsString = (child.newComments > 0) ? '(' + child.newComments + ' new comments)' : ''
+                                li #[a(href=child.to.githubMetadata.html_url) ##{child.to.githubMetadata.number}]  #{child.to.githubMetadata.title} #{child.to.githubMetadata.state.toUpperCase()} #{commentsString}
+            h2 Issues with Updates (in progress, without Epic) 🏃 
             ul
-                each val, index in updatedOrphanIssues
-                    li #[a(href=val.githubMetadata.html_url) ##{val.githubMetadata.number}]  #{val.githubMetadata.title} #{val.githubMetadata.state.toUpperCase()} updated at #{val.githubMetadata.updated_at}
+                each issue in updatedOrphanIssues
+                    - let commentsString = (issue.newComments > 0) ? '(' + issue.newComments + ' new comments)' : ''
+                    li #[a(href=issue.githubMetadata.html_url) ##{issue.githubMetadata.number}]  #{issue.githubMetadata.title} #{issue.githubMetadata.state.toUpperCase()} #{commentsString}
             h2 Closed Issues 💪 
             ul
-                each val, index in closedOrphanIssues
-                    li #[a(href=val.githubMetadata.html_url) ##{val.githubMetadata.number}]  #{val.githubMetadata.title} #{val.githubMetadata.state.toUpperCase()} closed at #{val.githubMetadata.closed_at}
+                each issue in closedIssues
+                    - let commentsString = (issue.newComments > 0) ? '(' + issue.newComments + ' new comments)' : ''
+                    li #[a(href=issue.githubMetadata.html_url) ##{issue.githubMetadata.number}]  #{issue.githubMetadata.title} #{issue.githubMetadata.state.toUpperCase()} #{commentsString}
             h2 New Issues ⭐ 
             ul
-                each val, index in newOrphanIssues
-                    li #[a(href=val.githubMetadata.html_url) ##{val.githubMetadata.number}]  #{val.githubMetadata.title} #{val.githubMetadata.state.toUpperCase()} created at #{val.githubMetadata.created_at}
+                each issue in newIssues
+                    - let commentsString = (issue.newComments > 0) ? '(' + issue.newComments + ' new comments)' : ''
+                    li #[a(href=issue.githubMetadata.html_url) ##{issue.githubMetadata.number}]  #{issue.githubMetadata.title} #{issue.githubMetadata.state.toUpperCase()} created by #{issue.creator} #{commentsString}
