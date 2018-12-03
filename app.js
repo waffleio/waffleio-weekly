@@ -28,7 +28,8 @@ const waffleProjectId = process.env.waffleProjectId
 
 const todaysDate = moment().format('YYYY-MM-DD')
 const todaysDateRaw = moment()
-const reportSinceDateRaw = todaysDateRaw - (60 * 1000 * 60 * 24 * 7) // since 1 day ago
+const daysToReport = 21
+const reportSinceDateRaw = todaysDateRaw - (60 * 1000 * 60 * 24 * daysToReport) // since 1 day ago
 
 async function getProject(id) {
     const response = await waffleAPI.get(`project/${id}`)
@@ -84,18 +85,8 @@ async function getIssueCommentsDetail(url) {
     return response.data
 }
 
-async function getEpicIssues(issues) {
-    let issueSubset = issues.filter(issue => issue.isEpic === true)
-    issueSubset = issueSubset.filter(issue => issue.isInProgress === true)
-    issueSubset = issueSubset.filter(issue => issue.isPR === false)
-
-    return issueSubset 
-}
-
-async function getUpdatedOrphanIssues(issues) {
-    let issueSubset = issues.filter(issue => issue.isChild === false)
-    issueSubset = issueSubset.filter(issue => issue.isEpic === false)
-    issueSubset = issueSubset.filter(issue => issue.githubMetadata.state === 'open')
+async function getInProgressIssues(issues) {
+    let issueSubset = issues.filter(issue => issue.githubMetadata.state === 'open')
     issueSubset = issues.filter(issue => issue.isInProgress === true)
     issueSubset = issueSubset.filter(issue => Date.parse(issue.githubMetadata.updated_at) > reportSinceDateRaw)
     issueSubset = issueSubset.filter(issue => issue.githubMetadata.updated_at != issue.githubMetadata.created_at)
@@ -159,21 +150,47 @@ async function ornamentIssues(issues) {
     return issues   
 }
 
+async function ornamentIssueMap(issue) {
+    issue.isEpic = await helpers.checkIfEpic(issue)
+    issue.isInProgress = await helpers.checkIfInProgress(issue)
+    issue.isChild = await helpers.checkIfChild(issue)
+    issue.isPR = await helpers.checkIfPR(issue)
+    issue.PRs = await helpers.getPRs(issue.relationships)
+
+    const issueDetail = await getIssueDetail(issue.githubMetadata.url)
+        if(issueDetail) {
+            issue.creator = await getIssueCreator(issueDetail)
+            
+            const issueCommentsDetail = await getIssueCommentsDetail(issueDetail.comments_url)
+            if(issueCommentsDetail) {
+                issue.newComments = await helpers.getNewComments(issueCommentsDetail, reportSinceDateRaw)
+            } else {
+                issue.newComments = []
+            }
+        }
+
+    return issue
+}
+
 app.get('/', async (req, res) => {
     let project = await getProject(waffleProjectId)
     let issues = await getIssuesForProject(project._id)
     issues = await pruneOldIssues(issues)
-    issues = await ornamentIssues(issues)
+    //issues = await ornamentIssues(issues)
+
+    let ornamentedIssues = await Promise.all(issues.map(ornamentIssueMap))
 
     res.render('report', {
         title: "Waffle.io Progress Report",
         message: "Waffle.io Progress Report",
         project: project.name,
-        epics: await getEpicIssues(issues),
-        newIssues: await getNewIssues(issues),
-        updatedOrphanIssues: await getUpdatedOrphanIssues(issues),
-        closedIssues: await getClosedIssues(issues)
+        days: daysToReport,
+        newIssues: await getNewIssues(ornamentedIssues),
+        updatedOrphanIssues: await getInProgressIssues(ornamentedIssues),
+        closedIssues: await getClosedIssues(ornamentedIssues)
     }) 
+        
+
 
     console.log('GH API Count: ' + ghApiCount)
 })

@@ -5,17 +5,9 @@ html
             include style.css
     body    
         h1=message
-        p for #{project}
-        p for past 7 days
-            h2 Epics (in progress) 🗂
-            ul
-                each epic in epics
-                    - let commentsString = (epic.newComments.length > 0) ? '(' + epic.newComments.length + ' new comments)' : ''
-                    li #[a(href=epic.githubMetadata.html_url) ##{epic.githubMetadata.number}]  #{epic.githubMetadata.title} #{epic.githubMetadata.state.toUpperCase()} #{commentsString}
-                        ul 
-                            each child in epic.relationships
-                                li #[a(href=child.to.githubMetadata.html_url) ##{child.to.githubMetadata.number}]  #{child.to.githubMetadata.title} #{child.to.githubMetadata.state.toUpperCase()}
-            h2 Issues with Updates (in progress, without Epic) 🏃 
+        p for #[a(href=`https://www.waffle.io/${project}`) #{project}] Waffle project
+        p for past #{days} days
+            h2 Issues with Updates (in progress) 🏃 
             ul
                 each issue in updatedOrphanIssues
                     - let commentsString = (issue.newComments.length > 0) ? '(' + issue.newComments.length + ' new comments)' : ''
