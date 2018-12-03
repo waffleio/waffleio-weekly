@@ -4,22 +4,29 @@ html
         style
             include style.css
     body    
-        h1=message
-        p for #[a(href=`https://www.waffle.io/${project}`) #{project}] Waffle project
-        p for past #{days} days
-            h2 Issues with Updates (in progress) 🏃 
-            ul
-                each issue in updatedOrphanIssues
-                    - let commentsString = (issue.newComments.length > 0) ? '(' + issue.newComments.length + ' new comments)' : ''
-                    - let prString = (issue.PRs.length > 0) ? '(' + issue.PRs.length + ' PRs)' : ''
-                    li #[a(href=issue.githubMetadata.html_url) ##{issue.githubMetadata.number}]  #{issue.githubMetadata.title} #{issue.githubMetadata.state.toUpperCase()} #{commentsString} #{prString}
-            h2 Closed Issues (but not Archived) 💪 
-            ul
-                each issue in closedIssues
-                    - let commentsString = (issue.newComments.length > 0) ? '(' + issue.newComments.length + ' new comments)' : ''
-                    li #[a(href=issue.githubMetadata.html_url) ##{issue.githubMetadata.number}]  #{issue.githubMetadata.title} #{issue.githubMetadata.state.toUpperCase()} #{commentsString}
-            h2 New Issues ⭐ 
-            ul
-                each issue in newIssues
-                    - let commentsString = (issue.newComments.length > 0) ? '(' + issue.newComments.length + ' new comments)' : ''
-                    li #[a(href=issue.githubMetadata.html_url) ##{issue.githubMetadata.number}]  #{issue.githubMetadata.title} #{issue.githubMetadata.state.toUpperCase()} created by #{issue.creator} #{commentsString}
+        <div class="report">
+            h1=message
+            p for #[a(href=`https://www.waffle.io/${project}`) #{project}] Waffle project
+            p for past #{days} days
+                h2 Issues with Updates (in progress) 🏃 
+                ul
+                    each issue in updatedOrphanIssues
+                        - let commentsString = (issue.newComments.length > 0) ? '(' + issue.newComments.length + ' new comments)' : ''
+                        - let stateString = (issue.currentState) ? `(COLUMN: ${issue.currentState})` : ''
+                        - let assigneesString = (issue.assignees) ? '(ASSIGNEES: ' + issue.assignees + ')' : ''
+                        - let epicString = (issue.isChild) ? `<span class="epic"> Epic: ${issue.epics[0].to.githubMetadata.title}</span>` : ''
+                        - let prString = (issue.PRs.length > 0) ? '(' + issue.PRs.length + ' PRs)' : ''
+                        li <div class="issueDetail">#[a(href=issue.githubMetadata.html_url) ##{issue.githubMetadata.number}] <span class="title">#{issue.githubMetadata.title}</span> !{epicString} <span class="comments">#{commentsString}</span><span class="prs">#{prString}</span><span class="asignees">#{assigneesString}</span><span class="state"> #{stateString}</span> for #{issue.daysInCurrentState} days</div>
+                h2 Closed Issues (but not Archived) 💪 
+                ul
+                    each issue in closedIssues
+                        - let epicString = (issue.isChild) ? `<span class="epic"> Epic: ${issue.epics[0].to.githubMetadata.title}</span>` : ''
+                         li <div class="issueDetail">#[a(href=issue.githubMetadata.html_url) ##{issue.githubMetadata.number}] <span class="title">#{issue.githubMetadata.title}</span> !{epicString} <span class="comments">#{commentsString}</span></div>
+                h2 New Issues ⭐ 
+                ul
+                    each issue in newIssues
+                        - let commentsString = (issue.newComments.length > 0) ? '(' + issue.newComments.length + ' new comments)' : ''
+                        - let epicString = (issue.isChild) ? `<span class="epic"> Epic: ${issue.epics[0].to.githubMetadata.title}</span>` : ''
+                        li <div class="issueDetail">#[a(href=issue.githubMetadata.html_url) ##{issue.githubMetadata.number}] <span class="title">#{issue.githubMetadata.title}</span> !{epicString} <span class="comments">#{commentsString}</span></div>
+                #{svgTest}
+            </div>

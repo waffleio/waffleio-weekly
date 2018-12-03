@@ -2,6 +2,7 @@ const helpers = require('./helpers')
 const _ = require('lodash')
 const axios = require('axios')
 const moment = require('moment')
+const octicons = require("octicons")
 const helmet = require('helmet')
 const express = require('express')
 const app = express()
@@ -10,6 +11,10 @@ app.set('view engine', 'pug')
 app.set('views', './views')
 
 app.use(helmet())
+
+//config for your project
+const daysToReport = 5
+const inProgressLabels = ['waffle:in progress', 'waffle:needs review']
 
 let ghApiCount = 0
 
@@ -26,9 +31,7 @@ const ghAPI = axios.create({
 
 const waffleProjectId = process.env.waffleProjectId
 
-const todaysDate = moment().format('YYYY-MM-DD')
 const todaysDateRaw = moment()
-const daysToReport = 21
 const reportSinceDateRaw = todaysDateRaw - (60 * 1000 * 60 * 24 * daysToReport) // since 1 day ago
 
 async function getProject(id) {
@@ -41,59 +44,64 @@ async function getIssuesForProject(id) {
     return response.data
 }
 
+async function getGHAPIRateLimit() {
+    const url = 'https://api.github.com/rate_limit'
+
+    return await ghAPI.get(url)
+        .then(response => {
+            console.log(`Remaining: ${response.rate.remaining}`)
+            return response.data
+        })
+        .catch(error => {
+            console.log(`${error.message}(${url})`)
+        })
+}
+
 async function getIssueDetail(url) {
-    const response = await ghAPI.get(url)
+    ghApiCount ++
+    
+    return await ghAPI.get(url)
         .then(response => {
-            return response
+            return response.data
         })
         .catch(error => {
             console.log(`${error.message}(${url})`)
         })
-
-    ghApiCount ++
-    return response.data
 }
 
-async function getPRDetail(url) {
-    console.log('hi')
+async function getIssueEventsDetail(url) {
+    ghApiCount ++
 
-
-    return
-
-    const response = await ghAPI.get(url)
+    return await ghAPI.get(url)
         .then(response => {
-            return response
+            return response.data
         })
         .catch(error => {
             console.log(`${error.message}(${url})`)
         })
-
-    ghApiCount ++
-    return response.data
 }
+
 
 async function getIssueCommentsDetail(url) {
-    const response = await ghAPI.get(url)
+    ghApiCount ++
+    
+    return await ghAPI.get(url)
         .then(response => {
-            return response
+            return response.data
         })
         .catch(error => {
             console.log(`${error.message}(${url})`)
         })
-
-    ghApiCount ++
-    return response.data
 }
 
 async function getInProgressIssues(issues) {
     let issueSubset = issues.filter(issue => issue.githubMetadata.state === 'open')
-    issueSubset = issues.filter(issue => issue.isInProgress === true)
-    issueSubset = issueSubset.filter(issue => Date.parse(issue.githubMetadata.updated_at) > reportSinceDateRaw)
-    issueSubset = issueSubset.filter(issue => issue.githubMetadata.updated_at != issue.githubMetadata.created_at)
+    issueSubset = issueSubset.filter(issue => issue.isEpic === false)
+    issueSubset = issueSubset.filter(issue => issue.isInProgress === true)
     issueSubset = issueSubset.filter(issue => issue.isPR === false)
     
     issueSubset = _.orderBy(issueSubset, ['githubMetadata.updated_at'], ['asc'])
-
+    
     return issueSubset 
 }
 
@@ -101,6 +109,8 @@ async function getClosedIssues(issues) {
     let issueSubset = issues.filter(issue => Date.parse(issue.githubMetadata.closed_at) > reportSinceDateRaw)
     issueSubset = issueSubset.filter(issue => issue.githubMetadata.state === 'closed')
     issueSubset = issueSubset.filter(issue => issue.isPR === false)
+
+    issueSubset = _.orderBy(issueSubset, ['githubMetadata.closed_at_at'], ['asc'])
 
     return issueSubset 
 }
@@ -110,7 +120,7 @@ async function getNewIssues(issues) {
     let issueSubset = issues.filter(issue => Date.parse(issue.githubMetadata.created_at) > reportSinceDateRaw)
     issueSubset = issueSubset.filter(issue => issue.isPR === false)
 
-    issueSubset = _.orderBy(issueSubset, ['githubMetadata.state', 'githubMetadata.created_at'], ['asc', 'asc'])
+    issueSubset = _.orderBy(issueSubset, ['githubMetadata.state', 'githubMetadata.created_at'], ['desc', 'asc'])
 
     return issueSubset 
 }
@@ -126,36 +136,15 @@ async function pruneOldIssues(issues) {
     return issueSubset
 }
 
-async function ornamentIssues(issues) {
-
-    for(let issue of issues) {
-        issue.isEpic = await helpers.checkIfEpic(issue)
-        issue.isInProgress = await helpers.checkIfInProgress(issue)
-        issue.isChild = await helpers.checkIfChild(issue)
-        issue.isPR = await helpers.checkIfPR(issue)
-        issue.PRs = await helpers.getPRs(issue.relationships)
-
-        const issueDetail = await getIssueDetail(issue.githubMetadata.url)
-        if(issueDetail) {
-            issue.creator = await getIssueCreator(issueDetail)
-            
-            const issueCommentsDetail = await getIssueCommentsDetail(issueDetail.comments_url)
-            if(issueCommentsDetail) {
-                issue.newComments = await helpers.getNewComments(issueCommentsDetail, reportSinceDateRaw)
-            } else {
-                issue.newComments = []
-            }
-        }
-    }    
-    return issues   
-}
-
 async function ornamentIssueMap(issue) {
     issue.isEpic = await helpers.checkIfEpic(issue)
-    issue.isInProgress = await helpers.checkIfInProgress(issue)
+    issue.epics = await helpers.getEpics(issue.relationships)
+    issue.isInProgress = await helpers.checkIfInProgress(issue, inProgressLabels)
+    issue.currentState = await helpers.getInProgressLabel(issue, inProgressLabels)
     issue.isChild = await helpers.checkIfChild(issue)
     issue.isPR = await helpers.checkIfPR(issue)
     issue.PRs = await helpers.getPRs(issue.relationships)
+    issue.assignees = await helpers.getAssignees(issue.githubMetadata.assignees)
 
     const issueDetail = await getIssueDetail(issue.githubMetadata.url)
         if(issueDetail) {
@@ -167,17 +156,23 @@ async function ornamentIssueMap(issue) {
             } else {
                 issue.newComments = []
             }
-        }
 
+            const issueEventsDetail = await getIssueEventsDetail(issueDetail.events_url)
+            if(issueEventsDetail) {
+                issue.daysInCurrentState = helpers.getDaysInState(issueEventsDetail, issue.currentState)
+            }
+        }
+    if(issue.githubMetadata.number == 395) {
+        console.log(issue)
+    }
     return issue
 }
 
 app.get('/', async (req, res) => {
+    getGHAPIRateLimit()
     let project = await getProject(waffleProjectId)
     let issues = await getIssuesForProject(project._id)
     issues = await pruneOldIssues(issues)
-    //issues = await ornamentIssues(issues)
-
     let ornamentedIssues = await Promise.all(issues.map(ornamentIssueMap))
 
     res.render('report', {
@@ -187,11 +182,10 @@ app.get('/', async (req, res) => {
         days: daysToReport,
         newIssues: await getNewIssues(ornamentedIssues),
         updatedOrphanIssues: await getInProgressIssues(ornamentedIssues),
-        closedIssues: await getClosedIssues(ornamentedIssues)
+        closedIssues: await getClosedIssues(ornamentedIssues),
+        svgTest: octicons.bell.toSVG()
     }) 
         
-
-
     console.log('GH API Count: ' + ghApiCount)
 })
 

@@ -1,3 +1,7 @@
+const _ = require('lodash')
+const axios = require('axios')
+const moment = require('moment')
+
 module.exports.checkIfEpic = function(issue) { 
     let isEpic = false
 
@@ -29,6 +33,11 @@ module.exports.checkIfChild = function(issue) {
     return isChild
 }
 
+module.exports.getEpics = function(relationships) {
+    let relationshipSubset = relationships.filter(relationship => relationship.relationship === 'child')
+    return relationshipSubset
+}
+
 module.exports.checkIfPR = function(issue) {
     let isPR = false
     
@@ -39,33 +48,39 @@ module.exports.checkIfPR = function(issue) {
     return isPR
 }
 
-module.exports.checkIfInProgress = function(issue) {
+module.exports.checkIfInProgress = function(issue, inProgressLabels) {
     
     let isInProgress = false
 
     if(issue.githubMetadata.labels) {
         isInProgress = issue.githubMetadata.labels.some(label => {
-            if (label.name === 'waffle:in progress' || label.name === 'waffle:needs review') {
-                return true
-            } 
+            for (let inProgressLabel of inProgressLabels) {
+                if (label.name === inProgressLabel) {
+                    return true
+                } 
+            }
         })
     }
 
     return isInProgress
 }
 
-module.exports.checkIfHasPR = function(issue) {
-    let hasPR = false
+module.exports.getInProgressLabel = function(issue, inProgressLabels) {
     
-    if(issue.relationships) {
-        hasPR = issue.relationships.some(issueRelationship => {
-            if (issueRelationship.relationship === 'close' || issueRelationship.relationship === 'connectedFrom') {
-                return true
-            }
-        })
-    }
+    let inProgressLabel = null
 
-    return hasPR
+    if(issue.githubMetadata.labels) {    
+        for (let label of issue.githubMetadata.labels) {
+            for (let inProgLabel of inProgressLabels) {
+                if (label.name === inProgLabel) {
+                    inProgressLabel = label.name
+                } 
+            }
+            
+        }
+    }
+    
+    return inProgressLabel
 }
 
 module.exports.getNewComments = function(comments, reportSinceDateRaw) {
@@ -74,6 +89,31 @@ module.exports.getNewComments = function(comments, reportSinceDateRaw) {
 }
 
 module.exports.getPRs = function(relationships) {
-    let relationshipSubset = relationships.filter(relationship => relationship.relationship === 'close' || relationship.relationship === 'connectedFrom')
+    let relationshipSubset = relationships.filter(relationship => relationship.relationship === 'closedBy' || relationship.relationship === 'connectedFrom')
     return relationshipSubset
+}
+
+module.exports.getAssignees = function(assignees) {
+    let issueAssignees = assignees.map(function(assignee) {
+        return assignee.login
+    })
+
+    return issueAssignees.join(', ')
+}
+
+module.exports.getDaysInState = function(events, currentState) {
+    let daysSinceLastInState
+    let eventsSubset = events.filter(event => event.event === 'labeled' && event.label.name === currentState)
+    eventsSubset = _.orderBy(eventsSubset, ['created_at'], ['desc'])
+
+    if (eventsSubset.length >= 1) {
+        labelAppliedDate = Date.parse(eventsSubset[0].created_at)
+        todaysDateRaw = moment()
+        daysSinceLastInState = (todaysDateRaw - labelAppliedDate) / 1000 / 60 / 60 / 24
+        daysSinceLastInState = Math.round(daysSinceLastInState)
+    } else {
+        daysSinceLastInState = null
+    }
+
+    return daysSinceLastInState
 }
