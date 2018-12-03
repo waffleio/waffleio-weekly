@@ -28,7 +28,7 @@ const waffleProjectId = process.env.waffleProjectId
 
 const todaysDate = moment().format('YYYY-MM-DD')
 const todaysDateRaw = moment()
-const reportSinceDateRaw = todaysDateRaw - (60 * 1000 * 60 * 24 * 1) // since 1 day ago
+const reportSinceDateRaw = todaysDateRaw - (60 * 1000 * 60 * 24 * 7) // since 1 day ago
 
 async function getProject(id) {
     const response = await waffleAPI.get(`project/${id}`)
@@ -41,6 +41,24 @@ async function getIssuesForProject(id) {
 }
 
 async function getIssueDetail(url) {
+    const response = await ghAPI.get(url)
+        .then(response => {
+            return response
+        })
+        .catch(error => {
+            console.log(`${error.message}(${url})`)
+        })
+
+    ghApiCount ++
+    return response.data
+}
+
+async function getPRDetail(url) {
+    console.log('hi')
+
+
+    return
+
     const response = await ghAPI.get(url)
         .then(response => {
             return response
@@ -69,6 +87,7 @@ async function getIssueCommentsDetail(url) {
 async function getEpicIssues(issues) {
     let issueSubset = issues.filter(issue => issue.isEpic === true)
     issueSubset = issueSubset.filter(issue => issue.isInProgress === true)
+    issueSubset = issueSubset.filter(issue => issue.isPR === false)
 
     return issueSubset 
 }
@@ -80,6 +99,7 @@ async function getUpdatedOrphanIssues(issues) {
     issueSubset = issues.filter(issue => issue.isInProgress === true)
     issueSubset = issueSubset.filter(issue => Date.parse(issue.githubMetadata.updated_at) > reportSinceDateRaw)
     issueSubset = issueSubset.filter(issue => issue.githubMetadata.updated_at != issue.githubMetadata.created_at)
+    issueSubset = issueSubset.filter(issue => issue.isPR === false)
     
     issueSubset = _.orderBy(issueSubset, ['githubMetadata.updated_at'], ['asc'])
 
@@ -89,12 +109,15 @@ async function getUpdatedOrphanIssues(issues) {
 async function getClosedIssues(issues) {
     let issueSubset = issues.filter(issue => Date.parse(issue.githubMetadata.closed_at) > reportSinceDateRaw)
     issueSubset = issueSubset.filter(issue => issue.githubMetadata.state === 'closed')
+    issueSubset = issueSubset.filter(issue => issue.isPR === false)
+
     return issueSubset 
 }
 
 async function getNewIssues(issues) {
 
     let issueSubset = issues.filter(issue => Date.parse(issue.githubMetadata.created_at) > reportSinceDateRaw)
+    issueSubset = issueSubset.filter(issue => issue.isPR === false)
 
     issueSubset = _.orderBy(issueSubset, ['githubMetadata.state', 'githubMetadata.created_at'], ['asc', 'asc'])
 
@@ -105,14 +128,10 @@ async function getIssueCreator(issue) {
     return issue.user.login 
 }
 
-async function getNewCommentCount(comments) {
-    let commentSubset = comments.filter(comment => Date.parse(comment.created_at) > reportSinceDateRaw)
-    return commentSubset.length
-}
-
 async function pruneOldIssues(issues) {
+    console.log('Total Issues: ' + issues.length)
     let issueSubset = issues.filter(issue => Date.parse(issue.githubMetadata.created_at) > reportSinceDateRaw || Date.parse(issue.githubMetadata.updated_at) > reportSinceDateRaw || Date.parse(issue.githubMetadata.closed_at) > reportSinceDateRaw)
-    
+    console.log('Remaining Issues: ' + issueSubset.length)
     return issueSubset
 }
 
@@ -122,13 +141,19 @@ async function ornamentIssues(issues) {
         issue.isEpic = await helpers.checkIfEpic(issue)
         issue.isInProgress = await helpers.checkIfInProgress(issue)
         issue.isChild = await helpers.checkIfChild(issue)
+        issue.isPR = await helpers.checkIfPR(issue)
+        issue.PRs = await helpers.getPRs(issue.relationships)
 
         const issueDetail = await getIssueDetail(issue.githubMetadata.url)
         if(issueDetail) {
             issue.creator = await getIssueCreator(issueDetail)
             
             const issueCommentsDetail = await getIssueCommentsDetail(issueDetail.comments_url)
-            if(issueCommentsDetail) issue.newComments = await getNewCommentCount(issueCommentsDetail)
+            if(issueCommentsDetail) {
+                issue.newComments = await helpers.getNewComments(issueCommentsDetail, reportSinceDateRaw)
+            } else {
+                issue.newComments = []
+            }
         }
     }    
     return issues   
