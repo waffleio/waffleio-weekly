@@ -159,7 +159,7 @@ async function ornamentIssueMap(issue) {
 
             const issueEventsDetail = await getIssueEventsDetail(issueDetail.events_url)
             if(issueEventsDetail) {
-                issue.daysInCurrentState = issueHelpers.getDaysInState(issueEventsDetail, issue.currentState)
+                issue.daysInCurrentState = issueHelpers.getDaysInState(issueEventsDetail, issue.currentState, moment())
             }
         }
     if(issue.githubMetadata.number == 395) {

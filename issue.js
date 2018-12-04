@@ -101,15 +101,14 @@ module.exports.getAssignees = function(assignees) {
     return issueAssignees.join(', ')
 }
 
-module.exports.getDaysInState = function(events, currentState) {
+module.exports.getDaysInState = function(events, currentState, todaysDateRaw) {
     let daysSinceLastInState
     let eventsSubset = events.filter(event => event.event === 'labeled' && event.label.name === currentState)
     eventsSubset = _.orderBy(eventsSubset, ['created_at'], ['desc'])
 
     if (eventsSubset.length >= 1) {
         labelAppliedDate = Date.parse(eventsSubset[0].created_at)
-        todaysDateRaw = moment()
-        daysSinceLastInState = (todaysDateRaw - labelAppliedDate) / 1000 / 60 / 60 / 24
+        daysSinceLastInState = ((todaysDateRaw - labelAppliedDate) / 1000 / 60 / 60 / 24)
         daysSinceLastInState = Math.round(daysSinceLastInState)
     } else {
         daysSinceLastInState = null

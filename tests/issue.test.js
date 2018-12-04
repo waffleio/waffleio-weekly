@@ -321,25 +321,227 @@ describe('getEpics', () => {
 })
 
 describe('getNewComments', () => {
-    it('do something', async () => {
-        expect(true).toBe(false)
+    it('should return an array of 1 comments if issue has 1 comments after filter date', async () => {
+        const comments = [
+            {
+              "created_at": "2011-04-14T16:00:49Z"
+            },
+            {
+              "created_at": "2011-04-10T16:00:49Z"
+            }
+          ]
+
+        const reportSinceDateRaw = Date.parse('2011-04-14T16:00:49Z') - 1000
+
+        const result = await issueHelpers.getNewComments(comments, reportSinceDateRaw)
+
+        expect(Array.isArray(result)).toBe(true)
+        expect(result.length).toBe(1)
+    })
+
+    it('should return an array of 0 comments if issue has 1 comments before filter date', async () => {
+        const comments = [
+            {
+                "created_at": "2011-04-10T16:00:49Z"
+              },
+              {
+                "created_at": "2011-04-10T16:00:49Z"
+              }
+          ]
+
+        const reportSinceDateRaw = Date.parse('2011-04-14T16:00:49Z') - 1000
+
+        const result = await issueHelpers.getNewComments(comments, reportSinceDateRaw)
+
+        expect(Array.isArray(result)).toBe(true)
+        expect(result.length).toBe(0)
     })
 })
 
 describe('getPRs', () => {
-    it('do something', async () => {
-        expect(true).toBe(false)
+    it('should return an array of 0 PRs if issue has 0 PRs relationships', async () => {
+        const relationships =  [
+                {
+                    "relationship": "child"
+                }
+            ]
+
+        const result = await issueHelpers.getPRs(relationships)
+
+        expect(Array.isArray(result)).toBe(true)
+        expect(result.length).toBe(0)
+    })
+
+    it('should return an array of 2 PRs if issue has 2 PRs relationships of type closedBy', async () => {
+        const relationships =  [
+                {
+                    "relationship": "closedBy"
+                },
+                {
+                    "relationship": "closedBy"
+                }
+            ]
+
+        const result = await issueHelpers.getPRs(relationships)
+
+        expect(Array.isArray(result)).toBe(true)
+        expect(result.length).toBe(2)
+    })
+
+    it('should return an array of 1 PRs if issue has 1 PRs relationships of type connectedFrom', async () => {
+        const relationships =  [
+                {
+                    "relationship": "connectedFrom"
+                }
+            ]
+
+        const result = await issueHelpers.getPRs(relationships)
+
+        expect(Array.isArray(result)).toBe(true)
+        expect(result.length).toBe(1)
+    })
+
+    it('should return an array of 2 PRs if issue has 2 PRs relationships - one of of type closedBy and one of type connectedFrom', async () => {
+        const relationships =  [
+                {
+                    "relationship": "closedBy"
+                },
+                {
+                    "relationship": "connectedFrom"
+                }
+            ]
+
+        const result = await issueHelpers.getPRs(relationships)
+
+        expect(Array.isArray(result)).toBe(true)
+        expect(result.length).toBe(2)
     })
 })
 
 describe('getAssignees', () => {
-    it('do something', async () => {
-        expect(true).toBe(false)
+    it('should return an empty string if issue has 0 assignees', async () => {
+        const assignees = [
+           
+        ]
+
+        const result = await issueHelpers.getAssignees(assignees)
+
+        expect(typeof result).toBe('string')
+        expect(result).toBe('')
+    })
+
+    it('should return an string of 1 assignees if issue has 1 assignees', async () => {
+        const assignees = [
+                    {
+                        "login": "adam"
+                    }
+                ]
+
+        const result = await issueHelpers.getAssignees(assignees)
+
+        expect(typeof result).toBe('string')
+        expect(result).toBe('adam')
+    })
+
+    it('should return an string of 3 assignees if issue has 3 assignees', async () => {
+        const assignees = [
+                    {
+                        "login": "adam"
+                    },
+                    {
+                        "login": "mary"
+                    },
+                    {
+                        "login": "bex"
+                    }
+                ]
+
+        const result = await issueHelpers.getAssignees(assignees)
+
+        expect(typeof result).toBe('string')
+        expect(result).toBe('adam, mary, bex')
     })
 })
 
 describe('getDaysInState', () => {
-    it('do something', async () => {
-        expect(true).toBe(false)
+    it('return null if there is no labeled event with the current state label', async () => {
+        const events = [
+            
+        ]
+
+        const currentState = 'waffle:in progress'
+
+        const todaysDateRaw = Date.parse('2018-11-18T01:00:00Z')
+
+        const result = await issueHelpers.getDaysInState(events, currentState, todaysDateRaw)
+
+        expect(result).toBe(null)
+    })
+
+    it('return 3 if there have been 3.0 days since the latest current state label was applied', async () => {
+        const events = [
+            {
+                "event": "labeled",
+                "created_at": "2018-11-15T00:00:00Z",
+                "label": {
+                    "name": "waffle:in progress"
+                }
+            }
+        ]
+
+        const currentState = 'waffle:in progress'
+
+        const todaysDateRaw = Date.parse('2018-11-18T00:00:00Z')
+
+        const result = await issueHelpers.getDaysInState(events, currentState, todaysDateRaw)
+
+        expect(result).toBe(3)
+    })
+
+    it('return 4 if there have been 3.75 days since the latest current state label was applied', async () => {
+        const events = [
+            {
+                "event": "labeled",
+                "created_at": "2018-11-15T00:00:00Z",
+                "label": {
+                    "name": "waffle:in progress"
+                }
+            }
+        ]
+
+        const currentState = 'waffle:in progress'
+
+        const todaysDateRaw = Date.parse('2018-11-18T18:00:00Z')
+
+        const result = await issueHelpers.getDaysInState(events, currentState, todaysDateRaw)
+
+        expect(result).toBe(4)
+    })
+
+    it('use the latest current state label if there are multiple labeled events', async () => {
+        const events = [
+            {
+                "event": "labeled",
+                "created_at": "2018-11-13T00:00:00Z",
+                "label": {
+                    "name": "waffle:in progress"
+                }
+            },
+            {
+                "event": "labeled",
+                "created_at": "2018-11-15T00:00:00Z",
+                "label": {
+                    "name": "waffle:in progress"
+                }
+            }
+        ]
+
+        const currentState = 'waffle:in progress'
+
+        const todaysDateRaw = Date.parse('2018-11-18T00:00:00Z')
+
+        const result = await issueHelpers.getDaysInState(events, currentState, todaysDateRaw)
+
+        expect(result).toBe(3)
     })
 })
