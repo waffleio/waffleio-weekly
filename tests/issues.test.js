@@ -458,3 +458,9 @@ describe('getNewIssues', () => {
         expect(result[2]._id).toBe('3')
     })
 })
+
+describe('getEpicIssues', () => {   
+    it.skip('something ...', async () => {
+
+    })
+})

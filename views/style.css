@@ -15,38 +15,48 @@ li {
 }
 
 .title {
-    font-size: 18px;
+    font-size: 16px;
     font-weight: bold;
 }
 
 .state {
     font-size: 16px;
-    margin: 0px 3px 0px 3px;
-    color: rgb(25, 131, 25);
+    border-radius: 5px;
+    padding: 3px 5px;
+    margin: 0px 5px 0px 5px;
+    background-color: rgb(177, 255, 144);
 }
 
 .asignees {
     font-size: 16px;
-    margin: 0px 3px 0px 3px;
-    color: blue;
+    border-radius: 5px;
+    padding: 3px 5px;
+    margin: 0px 5px 0px 5px;
+    background-color: rgb(244, 250, 114);
 }
 
 .creator {
     font-size: 16px;
-    margin: 0px 3px 0px 3px;
-    color: blue;
+    border-radius: 5px;
+    padding: 3px 5px;
+    margin: 0px 5px 0px 5px;
+    background-color: rgb(244, 250, 114);
 }
 
-.commments {
+.comments {
     font-size: 16px;
-    margin: 0px 3px 0px 3px;
-    color: blue;
+    border-radius: 5px;
+    padding: 3px 5px;
+    margin: 0px 5px 0px 5px;
+    background-color: rgb(238, 204, 92);
 }
 
 .prs {
     font-size: 16px;
-    margin: 0px 3px 0px 3px;
-    color: rgb(167, 93, 237);
+    border-radius: 5px;
+    padding: 3px 5px;
+    margin: 0px 5px 0px 5px;
+    background-color: rgb(222, 189, 252);
 }
 
 .epic {
@@ -54,5 +64,5 @@ li {
     border-radius: 5px;
     padding: 3px 5px;
     margin: 0px 5px 0px 5px;
-    background-color: rgb(137, 214, 242);
+    background-color: rgb(186, 232, 249);
 }

@@ -1,4 +1,5 @@
 const _ = require('lodash')
+const moment = require('moment')
 const axios = require('axios')
 
 let ghApiCount = 0
@@ -13,6 +14,10 @@ module.exports.getGHApiRateLimitRemaining = async function() {
     return await ghAPI.get(url)
         .then(response => {
             console.log(`GH API Remaining Calls: ${response.data.rate.remaining}`)
+
+            const timeNow = Date.parse(moment()) / 1000
+            const timeReset = response.data.rate.reset
+            console.log(`GH API Seconds to Reset: ${timeReset - timeNow}`)
         })
         .catch(error => {
             console.log(`${error.message}(${url})`)
@@ -97,3 +102,10 @@ module.exports.getNewIssues = function(issues, reportSinceDateRaw) {
     return issueSubset 
 }
 
+module.exports.getEpicIssues = function(issues) {
+    let issueSubset = issues.filter(issue => issue.isEpic === true)
+    issueSubset = issueSubset.filter(issue => issue.isInProgress === true)
+    issueSubset = issueSubset.filter(issue => issue.isPR === false)
+
+    return issueSubset 
+}

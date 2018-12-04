@@ -13,8 +13,8 @@ app.set('views', './views')
 app.use(helmet())
 
 //config for your project
-const daysToReport = 2
-const inProgressLabels = ['waffle:in progress', 'waffle:needs review']
+const daysToReport = process.env.daysToReport
+const inProgressLabels = process.env.inProgressLabels.split('|');
 
 const waffleProjectId = process.env.waffleProjectId
 
@@ -63,26 +63,47 @@ async function ornamentIssueMap(issue) {
                 issue.daysInCurrentState = issueHelpers.getDaysInState(issueEventsDetail, issue.currentState, moment())
             }
         }
-    if(issue.githubMetadata.number == 395) {
-        console.log(issue)
-    }
+
     return issue
+}
+
+async function ornamentEpicMap(epic) {
+    let epicChildren = []
+
+    epic.relationships.forEach(relationship => {
+        if(relationship.relationship === 'parent') {
+            let issueSubset = Array.from(this.issues)
+            issueSubset = issueSubset.filter(issue => relationship.to.id === issue.id)
+
+            if(issueSubset.length == 1) {
+                epicChildren.push(issueSubset[0])
+            }
+        }
+    }) 
+
+    epic.childIssues = epicChildren
+
+    return epic
 }
 
 app.get('/', async (req, res) => {
     let project = await getProject(waffleProjectId)
     let issues = await getIssuesForProject(project._id)
     issues = await issuesHelpers.pruneOldIssues(issues, reportSinceDateRaw)
-    let ornamentedIssues = await Promise.all(issues.map(ornamentIssueMap))
+    issues = await Promise.all(issues.map(ornamentIssueMap))
+
+    let epicIssues = await issuesHelpers.getEpicIssues(issues)
+    epicIssues = await Promise.all(epicIssues.map(ornamentEpicMap, {issues}))
 
     res.render('report', {
-        title: "Waffle.io Progress Report",
-        message: "Waffle.io Progress Report",
+        title: "📈 Waffle.io Progress Report",
+        message: "📈 Waffle.io Progress Report",
         project: project.name,
         days: daysToReport,
-        newIssues: await issuesHelpers.getNewIssues(ornamentedIssues, reportSinceDateRaw),
-        updatedOrphanIssues: await issuesHelpers.getInProgressIssues(ornamentedIssues),
-        closedIssues: await issuesHelpers.getClosedIssues(ornamentedIssues, reportSinceDateRaw),
+        epics: epicIssues,
+        newIssues: await issuesHelpers.getNewIssues(issues, reportSinceDateRaw),
+        updatedOrphanIssues: await issuesHelpers.getInProgressIssues(issues),
+        closedIssues: await issuesHelpers.getClosedIssues(issues, reportSinceDateRaw),
         svgTest: octicons.bell.toSVG()
     }) 
         
