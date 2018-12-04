@@ -27,6 +27,6 @@ html
                     each issue in newIssues
                         - let commentsString = (issue.newComments.length > 0) ? '(' + issue.newComments.length + ' new comments)' : ''
                         - let epicString = (issue.isChild) ? `<span class="epic"> Epic: ${issue.epics[0].to.githubMetadata.title}</span>` : ''
-                        li <div class="issueDetail">#[a(href=issue.githubMetadata.html_url) ##{issue.githubMetadata.number}] <span class="title">#{issue.githubMetadata.title}</span> !{epicString} <span class="comments">#{commentsString}</span></div>
+                        li <div class="issueDetail">#[a(href=issue.githubMetadata.html_url) ##{issue.githubMetadata.number}] <span class="title">#{issue.githubMetadata.title}</span> !{epicString} <span class="creator"> opened by #{issue.creator}</span><span class="comments">#{commentsString}</span></div>
                 #{svgTest}
             </div>

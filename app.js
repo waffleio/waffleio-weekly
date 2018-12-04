@@ -125,10 +125,6 @@ async function getNewIssues(issues) {
     return issueSubset 
 }
 
-async function getIssueCreator(issue) {
-    return issue.user.login 
-}
-
 async function pruneOldIssues(issues) {
     console.log('Total Issues: ' + issues.length)
     let issueSubset = issues.filter(issue => Date.parse(issue.githubMetadata.created_at) > reportSinceDateRaw || Date.parse(issue.githubMetadata.updated_at) > reportSinceDateRaw || Date.parse(issue.githubMetadata.closed_at) > reportSinceDateRaw)
@@ -148,7 +144,7 @@ async function ornamentIssueMap(issue) {
 
     const issueDetail = await getIssueDetail(issue.githubMetadata.url)
         if(issueDetail) {
-            issue.creator = await getIssueCreator(issueDetail)
+            issue.creator = issueDetail.user.login 
             
             const issueCommentsDetail = await getIssueCommentsDetail(issueDetail.comments_url)
             if(issueCommentsDetail) {

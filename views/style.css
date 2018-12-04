@@ -31,6 +31,12 @@ li {
     color: blue;
 }
 
+.creator {
+    font-size: 16px;
+    margin: 0px 3px 0px 3px;
+    color: blue;
+}
+
 .commments {
     font-size: 16px;
     margin: 0px 3px 0px 3px;
