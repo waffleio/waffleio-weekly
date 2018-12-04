@@ -1,20 +1,220 @@
 [
     {
-        "_id": "5bef3ebae127e70153fa4c60",
-        "__v": 1,
+        "_id": "5c01a6ca4ee62d001b3ab7b6",
+        "__v": 0,
+        "githubMetadata": {
+            "url": "https://api.github.com/repos/adamzolyak/test-data/issues/9",
+            "updated_at": "2018-11-30T21:08:26.000Z",
+            "title": "Create code3.js",
+            "state": "open",
+            "number": 9,
+            "id": 386350657,
+            "html_url": "https://github.com/adamzolyak/test-data/pull/9",
+            "created_at": "2018-11-30T21:08:22.000Z",
+            "comments": 0,
+            "closed_at": "1970-01-01T00:00:00.000Z",
+            "source": "5bef3e8890877e0219c79477",
+            "pull_request": {
+                "html_url": "https://github.com/adamzolyak/test-data/pull/9"
+            },
+            "labels": [
+                {
+                    "color": "e6e6e6",
+                    "name": "waffle:in progress"
+                }
+            ],
+            "assignees": []
+        },
+        "relationships": [
+            {
+                "_id": "5c01a6cb4ee62d001b3ab7b9",
+                "relationship": "connect",
+                "to": {
+                    "_id": "5c01a6a98297e40093c6336f",
+                    "__v": 2,
+                    "githubMetadata": {
+                        "closed_at": "1970-01-01T00:00:00.000Z",
+                        "comments": 3,
+                        "created_at": "2018-11-30T21:07:53.000Z",
+                        "html_url": "https://github.com/adamzolyak/test-data/issues/8",
+                        "id": 386350535,
+                        "number": 8,
+                        "state": "open",
+                        "title": "3rd orphan",
+                        "updated_at": "2018-12-04T16:49:43.000Z",
+                        "url": "https://api.github.com/repos/adamzolyak/test-data/issues/8",
+                        "source": "5bef3e8890877e0219c79477",
+                        "labels": [
+                            {
+                                "color": "e6e6e6",
+                                "name": "waffle:in progress"
+                            }
+                        ],
+                        "assignees": [
+                            {
+                                "avatar_url": "https://avatars1.githubusercontent.com/u/5940516?v=4",
+                                "login": "adamzolyak"
+                            }
+                        ]
+                    },
+                    "id": "5c01a6a98297e40093c6336f"
+                },
+                "__v": 0
+            }
+        ],
+        "id": "5c01a6ca4ee62d001b3ab7b6"
+    },
+    {
+        "_id": "5c01a6a98297e40093c6336f",
+        "__v": 2,
         "githubMetadata": {
             "closed_at": "1970-01-01T00:00:00.000Z",
+            "comments": 3,
+            "created_at": "2018-11-30T21:07:53.000Z",
+            "html_url": "https://github.com/adamzolyak/test-data/issues/8",
+            "id": 386350535,
+            "number": 8,
+            "state": "open",
+            "title": "3rd orphan",
+            "updated_at": "2018-12-04T16:49:43.000Z",
+            "url": "https://api.github.com/repos/adamzolyak/test-data/issues/8",
+            "source": "5bef3e8890877e0219c79477",
+            "labels": [
+                {
+                    "color": "e6e6e6",
+                    "name": "waffle:in progress"
+                }
+            ],
+            "assignees": [
+                {
+                    "avatar_url": "https://avatars1.githubusercontent.com/u/5940516?v=4",
+                    "login": "adamzolyak"
+                }
+            ]
+        },
+        "relationships": [
+            {
+                "_id": "5c01a6cb4ee62d001b3ab7b9",
+                "relationship": "connectedFrom",
+                "to": {
+                    "_id": "5c01a6ca4ee62d001b3ab7b6",
+                    "__v": 0,
+                    "githubMetadata": {
+                        "url": "https://api.github.com/repos/adamzolyak/test-data/issues/9",
+                        "updated_at": "2018-11-30T21:08:26.000Z",
+                        "title": "Create code3.js",
+                        "state": "open",
+                        "number": 9,
+                        "id": 386350657,
+                        "html_url": "https://github.com/adamzolyak/test-data/pull/9",
+                        "created_at": "2018-11-30T21:08:22.000Z",
+                        "comments": 0,
+                        "closed_at": "1970-01-01T00:00:00.000Z",
+                        "source": "5bef3e8890877e0219c79477",
+                        "pull_request": {
+                            "html_url": "https://github.com/adamzolyak/test-data/pull/9"
+                        },
+                        "labels": [
+                            {
+                                "color": "e6e6e6",
+                                "name": "waffle:in progress"
+                            }
+                        ],
+                        "assignees": []
+                    },
+                    "id": "5c01a6ca4ee62d001b3ab7b6"
+                },
+                "__v": 0
+            }
+        ],
+        "id": "5c01a6a98297e40093c6336f"
+    },
+    {
+        "_id": "5c01a289965835001c9a3f50",
+        "__v": 0,
+        "githubMetadata": {
+            "url": "https://api.github.com/repos/adamzolyak/test-data/issues/7",
+            "updated_at": "2018-11-30T21:03:50.000Z",
+            "title": "Create code2.js",
+            "state": "open",
+            "number": 7,
+            "id": 386345364,
+            "html_url": "https://github.com/adamzolyak/test-data/pull/7",
+            "created_at": "2018-11-30T20:50:13.000Z",
             "comments": 0,
+            "closed_at": "1970-01-01T00:00:00.000Z",
+            "source": "5bef3e8890877e0219c79477",
+            "pull_request": {
+                "html_url": "https://github.com/adamzolyak/test-data/pull/7"
+            },
+            "labels": [
+                {
+                    "color": "e6e6e6",
+                    "name": "waffle:in progress"
+                }
+            ],
+            "assignees": []
+        },
+        "relationships": [
+            {
+                "_id": "5c01a28a965835001c9a3f53",
+                "relationship": "close",
+                "to": {
+                    "_id": "5bef3eb58d7c4101b546cf94",
+                    "__v": 4,
+                    "archived": false,
+                    "githubMetadata": {
+                        "closed_at": "1970-01-01T00:00:00.000Z",
+                        "comments": 0,
+                        "created_at": "2018-11-16T22:03:33.000Z",
+                        "html_url": "https://github.com/adamzolyak/test-data/issues/3",
+                        "id": 381776609,
+                        "number": 3,
+                        "state": "open",
+                        "title": "child B",
+                        "updated_at": "2018-11-30T20:50:18.000Z",
+                        "url": "https://api.github.com/repos/adamzolyak/test-data/issues/3",
+                        "source": "5bef3e8890877e0219c79477",
+                        "labels": [
+                            {
+                                "color": "e6e6e6",
+                                "name": "waffle:in progress"
+                            }
+                        ],
+                        "assignees": [
+                            {
+                                "avatar_url": "https://avatars1.githubusercontent.com/u/5940516?v=4",
+                                "login": "adamzolyak"
+                            }
+                        ]
+                    },
+                    "id": "5bef3eb58d7c4101b546cf94"
+                },
+                "__v": 0
+            }
+        ],
+        "id": "5c01a289965835001c9a3f50"
+    },
+    {
+        "_id": "5bef3ebae127e70153fa4c60",
+        "__v": 2,
+        "githubMetadata": {
+            "closed_at": "1970-01-01T00:00:00.000Z",
+            "comments": 2,
             "created_at": "2018-11-16T22:03:37.000Z",
             "html_url": "https://github.com/adamzolyak/test-data/issues/4",
             "id": 381776638,
             "number": 4,
             "state": "open",
             "title": "child C",
-            "updated_at": "2018-11-16T22:04:12.000Z",
+            "updated_at": "2018-11-28T22:50:46.000Z",
             "url": "https://api.github.com/repos/adamzolyak/test-data/issues/4",
             "source": "5bef3e8890877e0219c79477",
             "labels": [
+                {
+                    "color": "d73a4a",
+                    "name": "bug"
+                },
                 {
                     "color": "ededed",
                     "name": "to do"
@@ -183,7 +383,7 @@
                 "relationship": "parent",
                 "to": {
                     "_id": "5bef3eb58d7c4101b546cf94",
-                    "__v": 3,
+                    "__v": 4,
                     "archived": false,
                     "githubMetadata": {
                         "closed_at": "1970-01-01T00:00:00.000Z",
@@ -194,7 +394,7 @@
                         "number": 3,
                         "state": "open",
                         "title": "child B",
-                        "updated_at": "2018-11-16T22:04:18.000Z",
+                        "updated_at": "2018-11-30T20:50:18.000Z",
                         "url": "https://api.github.com/repos/adamzolyak/test-data/issues/3",
                         "source": "5bef3e8890877e0219c79477",
                         "labels": [
@@ -203,7 +403,12 @@
                                 "name": "waffle:in progress"
                             }
                         ],
-                        "assignees": []
+                        "assignees": [
+                            {
+                                "avatar_url": "https://avatars1.githubusercontent.com/u/5940516?v=4",
+                                "login": "adamzolyak"
+                            }
+                        ]
                     },
                     "id": "5bef3eb58d7c4101b546cf94"
                 },
@@ -214,20 +419,24 @@
                 "relationship": "parent",
                 "to": {
                     "_id": "5bef3ebae127e70153fa4c60",
-                    "__v": 1,
+                    "__v": 2,
                     "githubMetadata": {
                         "closed_at": "1970-01-01T00:00:00.000Z",
-                        "comments": 0,
+                        "comments": 2,
                         "created_at": "2018-11-16T22:03:37.000Z",
                         "html_url": "https://github.com/adamzolyak/test-data/issues/4",
                         "id": 381776638,
                         "number": 4,
                         "state": "open",
                         "title": "child C",
-                        "updated_at": "2018-11-16T22:04:12.000Z",
+                        "updated_at": "2018-11-28T22:50:46.000Z",
                         "url": "https://api.github.com/repos/adamzolyak/test-data/issues/4",
                         "source": "5bef3e8890877e0219c79477",
                         "labels": [
+                            {
+                                "color": "d73a4a",
+                                "name": "bug"
+                            },
                             {
                                 "color": "ededed",
                                 "name": "to do"
@@ -244,7 +453,7 @@
     },
     {
         "_id": "5bef3eccb9dccf024b9faf24",
-        "__v": 1,
+        "__v": 2,
         "githubMetadata": {
             "closed_at": "1970-01-01T00:00:00.000Z",
             "comments": 0,
@@ -254,7 +463,7 @@
             "number": 5,
             "state": "open",
             "title": "1st orphan",
-            "updated_at": "2018-11-16T22:04:16.000Z",
+            "updated_at": "2018-11-30T20:49:46.000Z",
             "url": "https://api.github.com/repos/adamzolyak/test-data/issues/5",
             "source": "5bef3e8890877e0219c79477",
             "labels": [
@@ -263,14 +472,19 @@
                     "name": "waffle:in progress"
                 }
             ],
-            "assignees": []
+            "assignees": [
+                {
+                    "avatar_url": "https://avatars1.githubusercontent.com/u/5940516?v=4",
+                    "login": "adamzolyak"
+                }
+            ]
         },
         "relationships": [],
         "id": "5bef3eccb9dccf024b9faf24"
     },
     {
         "_id": "5bef3eb58d7c4101b546cf94",
-        "__v": 3,
+        "__v": 4,
         "archived": false,
         "githubMetadata": {
             "closed_at": "1970-01-01T00:00:00.000Z",
@@ -281,7 +495,7 @@
             "number": 3,
             "state": "open",
             "title": "child B",
-            "updated_at": "2018-11-16T22:04:18.000Z",
+            "updated_at": "2018-11-30T20:50:18.000Z",
             "url": "https://api.github.com/repos/adamzolyak/test-data/issues/3",
             "source": "5bef3e8890877e0219c79477",
             "labels": [
@@ -290,7 +504,12 @@
                     "name": "waffle:in progress"
                 }
             ],
-            "assignees": []
+            "assignees": [
+                {
+                    "avatar_url": "https://avatars1.githubusercontent.com/u/5940516?v=4",
+                    "login": "adamzolyak"
+                }
+            ]
         },
         "relationships": [
             {
@@ -320,6 +539,39 @@
                         "assignees": []
                     },
                     "id": "5bef3ea6c83ca202b1ac7e54"
+                },
+                "__v": 0
+            },
+            {
+                "_id": "5c01a28a965835001c9a3f53",
+                "relationship": "closedBy",
+                "to": {
+                    "_id": "5c01a289965835001c9a3f50",
+                    "__v": 0,
+                    "githubMetadata": {
+                        "url": "https://api.github.com/repos/adamzolyak/test-data/issues/7",
+                        "updated_at": "2018-11-30T21:03:50.000Z",
+                        "title": "Create code2.js",
+                        "state": "open",
+                        "number": 7,
+                        "id": 386345364,
+                        "html_url": "https://github.com/adamzolyak/test-data/pull/7",
+                        "created_at": "2018-11-30T20:50:13.000Z",
+                        "comments": 0,
+                        "closed_at": "1970-01-01T00:00:00.000Z",
+                        "source": "5bef3e8890877e0219c79477",
+                        "pull_request": {
+                            "html_url": "https://github.com/adamzolyak/test-data/pull/7"
+                        },
+                        "labels": [
+                            {
+                                "color": "e6e6e6",
+                                "name": "waffle:in progress"
+                            }
+                        ],
+                        "assignees": []
+                    },
+                    "id": "5c01a289965835001c9a3f50"
                 },
                 "__v": 0
             }

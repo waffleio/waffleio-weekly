@@ -33,11 +33,6 @@ module.exports.checkIfChild = function(issue) {
     return isChild
 }
 
-module.exports.getEpics = function(relationships) {
-    let relationshipSubset = relationships.filter(relationship => relationship.relationship === 'child')
-    return relationshipSubset
-}
-
 module.exports.checkIfPR = function(issue) {
     let isPR = false
     
@@ -81,6 +76,11 @@ module.exports.getInProgressLabel = function(issue, inProgressLabels) {
     }
     
     return inProgressLabel
+}
+
+module.exports.getEpics = function(relationships) {
+    let relationshipSubset = relationships.filter(relationship => relationship.relationship === 'child')
+    return relationshipSubset
 }
 
 module.exports.getNewComments = function(comments, reportSinceDateRaw) {

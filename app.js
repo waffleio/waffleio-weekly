@@ -1,4 +1,4 @@
-const helpers = require('./helpers')
+const issueHelpers = require('./issue')
 const _ = require('lodash')
 const axios = require('axios')
 const moment = require('moment')
@@ -13,7 +13,7 @@ app.set('views', './views')
 app.use(helmet())
 
 //config for your project
-const daysToReport = 5
+const daysToReport = 2
 const inProgressLabels = ['waffle:in progress', 'waffle:needs review']
 
 let ghApiCount = 0
@@ -49,7 +49,7 @@ async function getGHAPIRateLimit() {
 
     return await ghAPI.get(url)
         .then(response => {
-            console.log(`Remaining: ${response.rate.remaining}`)
+            console.log(`GH API Remaining Calls: ${response.data.rate.remaining}`)
             return response.data
         })
         .catch(error => {
@@ -137,14 +137,14 @@ async function pruneOldIssues(issues) {
 }
 
 async function ornamentIssueMap(issue) {
-    issue.isEpic = await helpers.checkIfEpic(issue)
-    issue.epics = await helpers.getEpics(issue.relationships)
-    issue.isInProgress = await helpers.checkIfInProgress(issue, inProgressLabels)
-    issue.currentState = await helpers.getInProgressLabel(issue, inProgressLabels)
-    issue.isChild = await helpers.checkIfChild(issue)
-    issue.isPR = await helpers.checkIfPR(issue)
-    issue.PRs = await helpers.getPRs(issue.relationships)
-    issue.assignees = await helpers.getAssignees(issue.githubMetadata.assignees)
+    issue.isEpic = await issueHelpers.checkIfEpic(issue)
+    issue.epics = await issueHelpers.getEpics(issue.relationships)
+    issue.isInProgress = await issueHelpers.checkIfInProgress(issue, inProgressLabels)
+    issue.currentState = await issueHelpers.getInProgressLabel(issue, inProgressLabels)
+    issue.isChild = await issueHelpers.checkIfChild(issue)
+    issue.isPR = await issueHelpers.checkIfPR(issue)
+    issue.PRs = await issueHelpers.getPRs(issue.relationships)
+    issue.assignees = await issueHelpers.getAssignees(issue.githubMetadata.assignees)
 
     const issueDetail = await getIssueDetail(issue.githubMetadata.url)
         if(issueDetail) {
@@ -152,14 +152,14 @@ async function ornamentIssueMap(issue) {
             
             const issueCommentsDetail = await getIssueCommentsDetail(issueDetail.comments_url)
             if(issueCommentsDetail) {
-                issue.newComments = await helpers.getNewComments(issueCommentsDetail, reportSinceDateRaw)
+                issue.newComments = await issueHelpers.getNewComments(issueCommentsDetail, reportSinceDateRaw)
             } else {
                 issue.newComments = []
             }
 
             const issueEventsDetail = await getIssueEventsDetail(issueDetail.events_url)
             if(issueEventsDetail) {
-                issue.daysInCurrentState = helpers.getDaysInState(issueEventsDetail, issue.currentState)
+                issue.daysInCurrentState = issueHelpers.getDaysInState(issueEventsDetail, issue.currentState)
             }
         }
     if(issue.githubMetadata.number == 395) {
@@ -169,7 +169,6 @@ async function ornamentIssueMap(issue) {
 }
 
 app.get('/', async (req, res) => {
-    getGHAPIRateLimit()
     let project = await getProject(waffleProjectId)
     let issues = await getIssuesForProject(project._id)
     issues = await pruneOldIssues(issues)
@@ -191,3 +190,5 @@ app.get('/', async (req, res) => {
 
 app.listen(3000)
 console.log('listening on port 3000...')
+
+getGHAPIRateLimit()
