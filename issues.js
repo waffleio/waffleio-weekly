@@ -61,10 +61,15 @@ module.exports.getIssueCommentsDetail = async function(url) {
         })
 }
 
+module.exports.pruneOldIssues = function(issues, reportSinceDateRaw) {
+    let issueSubset = issues.filter(issue => Date.parse(issue.githubMetadata.created_at) > reportSinceDateRaw || Date.parse(issue.githubMetadata.updated_at) > reportSinceDateRaw || Date.parse(issue.githubMetadata.closed_at) > reportSinceDateRaw)
+    return issueSubset
+}
+
 module.exports.getInProgressIssues = function(issues) {
     let issueSubset = issues.filter(issue => issue.githubMetadata.state === 'open')
-    issueSubset = issueSubset.filter(issue => issue.isEpic === false)
     issueSubset = issueSubset.filter(issue => issue.isInProgress === true)
+    issueSubset = issueSubset.filter(issue => issue.isEpic === false)
     issueSubset = issueSubset.filter(issue => issue.isPR === false)
     
     issueSubset = _.orderBy(issueSubset, ['githubMetadata.updated_at'], ['asc'])
@@ -77,7 +82,7 @@ module.exports.getClosedIssues = function(issues, reportSinceDateRaw) {
     issueSubset = issueSubset.filter(issue => issue.githubMetadata.state === 'closed')
     issueSubset = issueSubset.filter(issue => issue.isPR === false)
 
-    issueSubset = _.orderBy(issueSubset, ['githubMetadata.closed_at_at'], ['asc'])
+    issueSubset = _.orderBy(issueSubset, ['githubMetadata.closed_at'], ['asc'])
 
     return issueSubset 
 }
@@ -92,9 +97,3 @@ module.exports.getNewIssues = function(issues, reportSinceDateRaw) {
     return issueSubset 
 }
 
-module.exports.pruneOldIssues = function(issues, reportSinceDateRaw) {
-    console.log('Total Issues: ' + issues.length)
-    let issueSubset = issues.filter(issue => Date.parse(issue.githubMetadata.created_at) > reportSinceDateRaw || Date.parse(issue.githubMetadata.updated_at) > reportSinceDateRaw || Date.parse(issue.githubMetadata.closed_at) > reportSinceDateRaw)
-    console.log('Remaining Issues: ' + issueSubset.length)
-    return issueSubset
-}

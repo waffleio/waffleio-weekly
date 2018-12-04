@@ -5,7 +5,7 @@
   "main": "app.js",
   "scripts": {
     "start": "bash dev",
-    "test": "jest --watchAll"
+    "test": "jest --watchAll --coverage"
   },
   "repository": {
     "type": "git",
