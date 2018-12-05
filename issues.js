@@ -1,6 +1,7 @@
 const _ = require('lodash')
 const moment = require('moment')
 const axios = require('axios')
+const issueHelpers = require('./issue')
 
 let ghApiCount = 0
 
@@ -66,33 +67,30 @@ module.exports.getIssueCommentsDetail = async function(url) {
         })
 }
 
-module.exports.pruneOldIssues = function(issues, reportSinceDateRaw) {
-    for(const issue of issues) {
-        console.log(issue.githubMetadata.number)
-    }
-    
-    let issueSubset = issues.filter(issue => Date.parse(issue.githubMetadata.created_at) > reportSinceDateRaw || Date.parse(issue.githubMetadata.closed_at) > reportSinceDateRaw)
+module.exports.pruneOldIssues = function(issues, reportSinceDateRaw) {       
+    let issueSubset = issues.filter(issue => Date.parse(issue.githubMetadata.created_at) > reportSinceDateRaw || Date.parse(issue.githubMetadata.closed_at) > reportSinceDateRaw || issue.githubMetadata.state === 'open')
     issueSubset = issueSubset.filter(issue => {
-        if(issue.githubMetadata.status === 'Opened') {
-            console.log('issue is open')
+        if(issue.isChild == true) {
             return true
+        }else if(issue.githubMetadata.state === 'open') {
+            if(issue.isInProgress) {
+                return true
+            } else {
+                return false
+            }
         } else {
-            console.log('issue is closed')
-            return false
+            return true
         }
     })
-
-    for(const issue of issueSubset) {
-        console.log(issue.githubMetadata.number)
-    }
-
+ 
     return issueSubset
 }
 
-module.exports.getInProgressIssues = function(issues) {
+module.exports.getInProgressOrphanIssues = function(issues) {
     let issueSubset = issues.filter(issue => issue.githubMetadata.state === 'open')
     issueSubset = issueSubset.filter(issue => issue.isInProgress === true)
     issueSubset = issueSubset.filter(issue => issue.isEpic === false)
+    issueSubset = issueSubset.filter(issue => issue.isChild === false)
     issueSubset = issueSubset.filter(issue => issue.isPR === false)
     
     issueSubset = _.orderBy(issueSubset, ['githubMetadata.updated_at'], ['asc'])

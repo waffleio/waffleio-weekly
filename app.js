@@ -37,12 +37,18 @@ async function getIssuesForProject(project) {
     return response.data
 }
 
+async function ornamentIssuePrePruneMap(issue) {
+    issue.isInProgress = await issueHelpers.checkIfInProgress(issue, inProgressLabels)
+    issue.isChild = await issueHelpers.checkIfChild(issue)
+
+    return issue
+}
+
 async function ornamentIssueMap(issue) {
     issue.isEpic = await issueHelpers.checkIfEpic(issue)
     issue.epics = await issueHelpers.getEpics(issue.relationships)
-    issue.isInProgress = await issueHelpers.checkIfInProgress(issue, inProgressLabels)
+    //issue.isInProgress = await issueHelpers.checkIfInProgress(issue, inProgressLabels)
     issue.currentState = await issueHelpers.getInProgressLabel(issue, inProgressLabels)
-    issue.isChild = await issueHelpers.checkIfChild(issue)
     issue.isPR = await issueHelpers.checkIfPR(issue)
     issue.PRs = await issueHelpers.getPRs(issue.relationships)
     issue.assignees = await issueHelpers.getAssignees(issue.githubMetadata.assignees)
@@ -89,6 +95,7 @@ async function ornamentEpicMap(epic) {
 app.get('/', async (req, res) => {
     //let project = await getProject(waffleProject)
     let issues = await getIssuesForProject(waffleProject)
+    issues = await Promise.all(issues.map(ornamentIssuePrePruneMap))
     issues = await issuesHelpers.pruneOldIssues(issues, reportSinceDateRaw)
     issues = await Promise.all(issues.map(ornamentIssueMap))
 
@@ -102,9 +109,8 @@ app.get('/', async (req, res) => {
         days: daysToReport,
         epics: epicIssues,
         newIssues: await issuesHelpers.getNewIssues(issues, reportSinceDateRaw),
-        updatedOrphanIssues: await issuesHelpers.getInProgressIssues(issues),
-        closedIssues: await issuesHelpers.getClosedIssues(issues, reportSinceDateRaw),
-        svgTest: octicons.bell.toSVG()
+        updatedOrphanIssues: await issuesHelpers.getInProgressOrphanIssues(issues),
+        closedIssues: await issuesHelpers.getClosedIssues(issues, reportSinceDateRaw)
     }) 
         
     issuesHelpers.printGHApiCountUsed()

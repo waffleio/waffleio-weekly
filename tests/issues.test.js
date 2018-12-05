@@ -19,12 +19,12 @@ describe('pruneOldIssues', () => {
         const issues = [
             {
                 "githubMetadata": {
-                    "created_at": "2018-11-30T00:00:00.000Z",
+                    "created_at": "2018-11-30T00:00:00.000Z"
                 }
             },
             {
                 "githubMetadata": {
-                    "created_at": "2018-11-30T00:00:00.000Z",
+                    "created_at": "2018-11-30T00:00:00.000Z"
                 }
             }
         ]
@@ -37,17 +37,67 @@ describe('pruneOldIssues', () => {
         expect(result.length).toBe(2)
     })
 
-    it('should return an array with 2 issues if 2 issues were updated since the report starting date', async () => {
+    it('should return an array with 2 issues if 2 issues are open and in progress', async () => {
         const issues = [
             {
                 "githubMetadata": {
-                    "updated_at": "2018-11-30T00:00:00.000Z",
-                }
+                    "state": "open"
+                },
+                "isInProgress": "true"
             },
             {
                 "githubMetadata": {
-                    "updated_at": "2018-11-30T00:00:00.000Z",
-                }
+                    "state": "open"
+                },
+                "isInProgress": "true"
+            }
+        ]
+        
+        const reportSinceDateRaw = Date.parse('2018-11-10T00:00:00Z')
+
+        const result = await issuesHelpers.pruneOldIssues(issues, reportSinceDateRaw)
+
+        expect(Array.isArray(result)).toBe(true)
+        expect(result.length).toBe(2)
+    })
+
+    it('should return an array with 0 issues if 0 issues are open but NOT in progress', async () => {
+        const issues = [
+            {
+                "githubMetadata": {
+                    "state": "open"
+                },
+                "isInProgress": false
+            },
+            {
+                "githubMetadata": {
+                    "state": "open"
+                },
+                "isInProgress": false
+            }
+        ]
+        
+        const reportSinceDateRaw = Date.parse('2018-11-10T00:00:00Z')
+
+        const result = await issuesHelpers.pruneOldIssues(issues, reportSinceDateRaw)
+
+        expect(Array.isArray(result)).toBe(true)
+        expect(result.length).toBe(0)
+    })
+
+    it('should return an array with 2 issues if 2 issues are children', async () => {
+        const issues = [
+            {
+                "githubMetadata": {
+                    "state": "open"
+                },
+                "isChild": true
+            },
+            {
+                "githubMetadata": {
+                    "state": "open"
+                },
+                "isChild": true
             }
         ]
         
@@ -63,34 +113,7 @@ describe('pruneOldIssues', () => {
         const issues = [
             {
                 "githubMetadata": {
-                    "closed_at": "2018-11-30T00:00:00.000Z",
-                }
-            },
-            {
-                "githubMetadata": {
-                    "closed_at": "2018-11-30T00:00:00.000Z",
-                }
-            }
-        ]
-        
-        const reportSinceDateRaw = Date.parse('2018-11-10T00:00:00Z')
-
-        const result = await issuesHelpers.pruneOldIssues(issues, reportSinceDateRaw)
-
-        expect(Array.isArray(result)).toBe(true)
-        expect(result.length).toBe(2)
-    })
-
-    it('should return an array with 3 issues if 3 issues were created / updated closed since the report starting date', async () => {
-        const issues = [
-            {
-                "githubMetadata": {
-                    "created_at": "2018-11-30T00:00:00.000Z"
-                }
-            },
-            {
-                "githubMetadata": {
-                    "updated_at": "2018-11-30T00:00:00.000Z"
+                    "closed_at": "2018-11-30T00:00:00.000Z"
                 }
             },
             {
@@ -105,12 +128,46 @@ describe('pruneOldIssues', () => {
         const result = await issuesHelpers.pruneOldIssues(issues, reportSinceDateRaw)
 
         expect(Array.isArray(result)).toBe(true)
-        expect(result.length).toBe(3)
+        expect(result.length).toBe(2)
+    })
+
+    it('should return an array with 4 issues if one of each case', async () => {
+        const issues = [
+            {
+                "githubMetadata": {
+                    "created_at": "2018-11-30T00:00:00.000Z"
+                }
+            },
+            {
+                "githubMetadata": {
+                    "state": "open"
+                },
+                "isInProgress": true
+            },
+            {
+                "githubMetadata": {
+                    "state": "open"
+                },
+                "isChild": true
+            },
+            {
+                "githubMetadata": {
+                    "closed_at": "2018-11-30T00:00:00.000Z"
+                }
+            }
+        ]
+        
+        const reportSinceDateRaw = Date.parse('2018-11-10T00:00:00Z')
+
+        const result = await issuesHelpers.pruneOldIssues(issues, reportSinceDateRaw)
+
+        expect(Array.isArray(result)).toBe(true)
+        expect(result.length).toBe(4)
     })
 })
 
-describe('getInProgressIssues', () => {    
-    it('should return issue if issue is open, in progress, not an epic, and not a pr', async () => {
+describe('getInProgressOrphanIssues', () => {    
+    it('should return issue if issue is open, in progress, not an epic, not a child, and not a pr', async () => {
         const issues = [
             {
                 "githubMetadata": {
@@ -119,11 +176,12 @@ describe('getInProgressIssues', () => {
                 },
                 isInProgress: true,
                 isEpic: false,
+                isChild: false,
                 isPR: false
             }
         ]
 
-        const result = await issuesHelpers.getInProgressIssues(issues)
+        const result = await issuesHelpers.getInProgressOrphanIssues(issues)
 
         expect(Array.isArray(result)).toBe(true)
         expect(result.length).toBe(1)
@@ -138,11 +196,12 @@ describe('getInProgressIssues', () => {
                 },
                 isInProgress: true,
                 isEpic: false,
+                isChild: false,
                 isPR: false
             }
         ]
 
-        const result = await issuesHelpers.getInProgressIssues(issues)
+        const result = await issuesHelpers.getInProgressOrphanIssues(issues)
 
         expect(Array.isArray(result)).toBe(true)
         expect(result.length).toBe(0)
@@ -157,11 +216,12 @@ describe('getInProgressIssues', () => {
                 },
                 isInProgress: false,
                 isEpic: false,
+                isChild: false,
                 isPR: false
             }
         ]
 
-        const result = await issuesHelpers.getInProgressIssues(issues)
+        const result = await issuesHelpers.getInProgressOrphanIssues(issues)
 
         expect(Array.isArray(result)).toBe(true)
         expect(result.length).toBe(0)
@@ -176,11 +236,12 @@ describe('getInProgressIssues', () => {
                 },
                 isInProgress: true,
                 isEpic: true,
+                isChild: false,
                 isPR: false
             }
         ]
 
-        const result = await issuesHelpers.getInProgressIssues(issues)
+        const result = await issuesHelpers.getInProgressOrphanIssues(issues)
 
         expect(Array.isArray(result)).toBe(true)
         expect(result.length).toBe(0)
@@ -195,11 +256,12 @@ describe('getInProgressIssues', () => {
                 },
                 isInProgress: true,
                 isEpic: false,
+                isChild: false,
                 isPR: true
             }
         ]
 
-        const result = await issuesHelpers.getInProgressIssues(issues)
+        const result = await issuesHelpers.getInProgressOrphanIssues(issues)
 
         expect(Array.isArray(result)).toBe(true)
         expect(result.length).toBe(0)
@@ -215,6 +277,7 @@ describe('getInProgressIssues', () => {
                 },
                 isInProgress: true,
                 isEpic: false,
+                isChild: false,
                 isPR: false
             },
             {
@@ -225,6 +288,7 @@ describe('getInProgressIssues', () => {
                 },
                 isInProgress: true,
                 isEpic: false,
+                isChild: false,
                 isPR: false
             },
             {
@@ -235,11 +299,12 @@ describe('getInProgressIssues', () => {
                 },
                 isInProgress: true,
                 isEpic: false,
+                isChild: false,
                 isPR: false
             }
         ]
 
-        const result = await issuesHelpers.getInProgressIssues(issues)
+        const result = await issuesHelpers.getInProgressOrphanIssues(issues)
 
         expect(Array.isArray(result)).toBe(true)
         expect(result[0]._id).toBe('2')
@@ -460,7 +525,62 @@ describe('getNewIssues', () => {
 })
 
 describe('getEpicIssues', () => {   
-    it.skip('something ...', async () => {
+    it('should return an array of 2 epics if 2 epics in progress, epics, and NOT PRs', async () => {
+        const issues = [
+            {
+                isInProgress: true,
+                isEpic: true,
+                isPR: false
+            },
+            {
+                isInProgress: true,
+                isEpic: true,
+                isPR: false
+            },
+        ]
 
+        const result = await issuesHelpers.getEpicIssues(issues)
+
+        expect(Array.isArray(result)).toBe(true)
+        expect(result.length).toBe(2)
+    })
+
+    it('should NOT return an epic if issue is NOT an epic', async () => {
+        const issues = [
+            {
+                isEpic: false
+            }
+        ]
+
+        const result = await issuesHelpers.getEpicIssues(issues)
+
+        expect(Array.isArray(result)).toBe(true)
+        expect(result.length).toBe(0)
+    })
+
+    it('should NOT return an epic if issue is a PR', async () => {
+        const issues = [
+            {
+                isPR: false
+            }
+        ]
+
+        const result = await issuesHelpers.getEpicIssues(issues)
+
+        expect(Array.isArray(result)).toBe(true)
+        expect(result.length).toBe(0)
+    })
+
+    it('should NOT return an epic if issue is NOT in progress', async () => {
+        const issues = [
+            {
+                isInProgress: false
+            }
+        ]
+
+        const result = await issuesHelpers.getEpicIssues(issues)
+
+        expect(Array.isArray(result)).toBe(true)
+        expect(result.length).toBe(0)
     })
 })
