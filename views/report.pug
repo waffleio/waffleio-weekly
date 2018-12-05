@@ -30,8 +30,11 @@ html
                 h2 Closed Issues (but not Archived) 💪 
                 ul
                     each issue in closedIssues
-                        - let epicString = (issue.isChild) ? `<span class="epic"> 🗂 Epic: ${issue.epics[0].to.githubMetadata.title}</span>` : ''
-                         li <div class="issueDetail">#[a(href=issue.githubMetadata.html_url) ##{issue.githubMetadata.number}] <span class="title">#{issue.githubMetadata.title}</span>!{epicString}</div>
+                        - let commentsString = (issue.newComments.length > 0) ? '💬 ' + issue.newComments.length + ' new' : ''
+                        - let stateString = (issue.currentState) ? `${issue.githubMetadata.state.toUpperCase()} (🚣 ${issue.currentState}) for ${issue.daysInCurrentState} days 🗓` : `${issue.githubMetadata.state.toUpperCase()}`
+                        - let assigneesString = (issue.assignees) ? '👩‍💻 ' + issue.assignees : ''
+                        - let prString = (issue.PRs.length > 0) ? '🔍 ' + issue.PRs.length + ' PRs' : ''
+                        li <div class="issueDetail">#[a(href=issue.githubMetadata.html_url) ##{issue.githubMetadata.number}] <span class="title">#{issue.githubMetadata.title}</span><span class="state">#{stateString}</span><span class="prs">#{prString}</span><span class="asignees">#{assigneesString}</span><span class="comments">#{commentsString}</span></div>
                 h2 Closed Issues (Archived) 💪 💪 💪 
                     ul
                         li TODO
@@ -39,6 +42,9 @@ html
                 ul
                     each issue in newIssues
                         - let commentsString = (issue.newComments.length > 0) ? '💬 ' + issue.newComments.length + ' new' : ''
+                        - let stateString = (issue.currentState) ? `${issue.githubMetadata.state.toUpperCase()} (🚣 ${issue.currentState}) for ${issue.daysInCurrentState} days 🗓` : `${issue.githubMetadata.state.toUpperCase()}`
+                        - let assigneesString = (issue.assignees) ? '👩‍💻 ' + issue.assignees : ''
+                        - let prString = (issue.PRs.length > 0) ? '🔍 ' + issue.PRs.length + ' PRs' : ''
                         - let epicString = (issue.isChild) ? `<span class="epic"> 🗂 Epic: ${issue.epics[0].to.githubMetadata.title}</span>` : ''
-                        li <div class="issueDetail">#[a(href=issue.githubMetadata.html_url) ##{issue.githubMetadata.number}] <span class="title">#{issue.githubMetadata.title}</span>!{epicString}<span class="creator"> 🙋 opened by #{issue.creator}</span><span class="comments">#{commentsString}</span></div>
+                        li <div class="issueDetail">#[a(href=issue.githubMetadata.html_url) ##{issue.githubMetadata.number}] <span class="title">#{issue.githubMetadata.title}</span>!{epicString}<span class="creator"> 🙋 opened by #{issue.creator}</span><span class="state">#{stateString}</span><span class="prs">#{prString}</span><span class="asignees">#{assigneesString}</span><span class="comments">#{commentsString}</span></div>
             </div>
