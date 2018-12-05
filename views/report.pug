@@ -8,14 +8,14 @@ html
             h1=message
             p for #[a(href=`https://www.waffle.io/${project}`) #{project}] Waffle project
             p for past #{days} days
-                h2 Epics (in progress) 🏃
+                h2 Epics (in progress) 🗂 🏃
                 ul
                     each epic in epics
                         li <div class="issueDetail">#[a(href=epic.githubMetadata.html_url) ##{epic.githubMetadata.number}] <span class="title">#{epic.githubMetadata.title}</span></div>
                         ul
                             each issue in epic.childIssues
                                 - let commentsString = (issue.newComments.length > 0) ? '💬 ' + issue.newComments.length + ' new' : ''
-                                - let stateString = (issue.currentState) ? `${issue.githubMetadata.state.toUpperCase()} (🔖 ${issue.currentState}) for ${issue.daysInCurrentState} days 🗓` : `${issue.githubMetadata.state}`
+                                - let stateString = (issue.currentState) ? `${issue.githubMetadata.state.toUpperCase()} (🚣 ${issue.currentState}) for ${issue.daysInCurrentState} days 🗓` : `${issue.githubMetadata.state.toUpperCase()}`
                                 - let assigneesString = (issue.assignees) ? '👩‍💻 ' + issue.assignees : ''
                                 - let prString = (issue.PRs.length > 0) ? '🔍 ' + issue.PRs.length + ' PRs' : ''
                                 li <div class="issueDetail">#[a(href=issue.githubMetadata.html_url) ##{issue.githubMetadata.number}] <span class="title">#{issue.githubMetadata.title}</span><span class="state">#{stateString}</span><span class="prs">#{prString}</span><span class="asignees">#{assigneesString}</span><span class="comments">#{commentsString}</span></div>
@@ -23,7 +23,7 @@ html
                 ul
                     each issue in updatedOrphanIssues
                         - let commentsString = (issue.newComments.length > 0) ? '💬 ' + issue.newComments.length + ' new' : ''
-                        - let stateString = (issue.currentState) ? `${issue.githubMetadata.state.toUpperCase()} (🔖 ${issue.currentState}) for ${issue.daysInCurrentState} days 🗓` : `${issue.githubMetadata.state}`
+                        - let stateString = (issue.currentState) ? `${issue.githubMetadata.state.toUpperCase()} (🚣 ${issue.currentState}) for ${issue.daysInCurrentState} days 🗓` : `${issue.githubMetadata.state.toUpperCase()}`
                         - let assigneesString = (issue.assignees) ? '👩‍💻 ' + issue.assignees : ''
                         - let prString = (issue.PRs.length > 0) ? '🔍 ' + issue.PRs.length + ' PRs' : ''
                         li <div class="issueDetail">#[a(href=issue.githubMetadata.html_url) ##{issue.githubMetadata.number}] <span class="title">#{issue.githubMetadata.title}</span><span class="state">#{stateString}</span><span class="prs">#{prString}</span><span class="asignees">#{assigneesString}</span><span class="comments">#{commentsString}</span></div>
@@ -32,6 +32,9 @@ html
                     each issue in closedIssues
                         - let epicString = (issue.isChild) ? `<span class="epic"> 🗂 Epic: ${issue.epics[0].to.githubMetadata.title}</span>` : ''
                          li <div class="issueDetail">#[a(href=issue.githubMetadata.html_url) ##{issue.githubMetadata.number}] <span class="title">#{issue.githubMetadata.title}</span>!{epicString}</div>
+                h2 Closed Issues (Archived) 💪 💪 💪 
+                    ul
+                        li TODO
                 h2 New Issues ⭐ 
                 ul
                     each issue in newIssues

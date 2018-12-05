@@ -16,7 +16,7 @@ app.use(helmet())
 const daysToReport = process.env.daysToReport
 const inProgressLabels = process.env.inProgressLabels.split('|');
 
-const waffleProjectId = process.env.waffleProjectId
+const waffleProject = process.env.waffleProject
 
 const todaysDateRaw = moment()
 const reportSinceDateRaw = todaysDateRaw - (60 * 1000 * 60 * 24 * daysToReport) // since 1 day ago
@@ -27,13 +27,13 @@ const waffleAPI = axios.create({
     headers: {'Authorization': 'bearer ' + process.env.waffleApiSecret}
 })
 
-async function getProject(id) {
-    const response = await waffleAPI.get(`project/${id}`)
+async function getProject(project) {
+    const response = await waffleAPI.get(`${project}/cards`)
     return response.data
 }
 
-async function getIssuesForProject(id) {
-    const response = await waffleAPI.get(`projects/${id}/cards`)
+async function getIssuesForProject(project) {
+    const response = await waffleAPI.get(`${project}/cards`)
     return response.data
 }
 
@@ -87,8 +87,8 @@ async function ornamentEpicMap(epic) {
 }
 
 app.get('/', async (req, res) => {
-    let project = await getProject(waffleProjectId)
-    let issues = await getIssuesForProject(project._id)
+    //let project = await getProject(waffleProject)
+    let issues = await getIssuesForProject(waffleProject)
     issues = await issuesHelpers.pruneOldIssues(issues, reportSinceDateRaw)
     issues = await Promise.all(issues.map(ornamentIssueMap))
 
@@ -98,7 +98,7 @@ app.get('/', async (req, res) => {
     res.render('report', {
         title: "📈 Waffle.io Progress Report",
         message: "📈 Waffle.io Progress Report",
-        project: project.name,
+        project: waffleProject,
         days: daysToReport,
         epics: epicIssues,
         newIssues: await issuesHelpers.getNewIssues(issues, reportSinceDateRaw),
