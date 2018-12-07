@@ -4,7 +4,7 @@
   "description": "A weekly report of what your team has accomplished in Waffle.io!",
   "main": "app.js",
   "scripts": {
-    "start": "bash dev",
+    "start": "node app.js",
     "test": "jest --watchAll --coverage"
   },
   "repository": {
@@ -19,6 +19,7 @@
   "homepage": "https://github.com/adamzolyak/wafflebotimpact#readme",
   "dependencies": {
     "axios": "^0.18.0",
+    "dotenv": "^6.2.0",
     "express": "^4.16.4",
     "helmet": "^3.15.0",
     "lodash": "^4.17.11",

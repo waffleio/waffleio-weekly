@@ -6,6 +6,7 @@ const mailer = require("pug-mailer");
 const helmet = require("helmet");
 const express = require("express");
 const app = express();
+require("dotenv").config();
 
 app.set("view engine", "pug");
 app.set("views", "./views");
@@ -14,6 +15,7 @@ app.use(helmet());
 
 //config for your project
 const daysToReport = process.env.daysToReport;
+const webReportEnabled = process.env.webReportEnabled;
 const inProgressLabels = process.env.inProgressLabels.split(",");
 
 mailer.init({
@@ -32,6 +34,7 @@ const waffleProject = process.env.waffleProject;
 
 console.log(`Project: ${waffleProject}`);
 console.log(`Days to Report: ${daysToReport}`);
+console.log(`Web Report Enabled: ${webReportEnabled}`);
 
 const todaysDateRaw = moment();
 const reportSinceDateRaw = todaysDateRaw - 60 * 1000 * 60 * 24 * daysToReport; // since 1 day ago
@@ -42,14 +45,33 @@ const waffleAPI = axios.create({
   headers: { Authorization: "bearer " + process.env.waffleApiSecret }
 });
 
-async function getProject(project) {
-  const response = await waffleAPI.get(`${project}/cards`);
-  return response.data;
-}
-
 async function getIssuesForProject(project) {
-  const response = await waffleAPI.get(`${project}/cards`);
-  return response.data;
+  const url = `${project}/cards`;
+
+  return await waffleAPI
+    .get(url)
+    .then(response => {
+      return response.data;
+    })
+    .catch(error => {
+      if (error.response) {
+        // The request was made and the server responded with a status code
+        // that falls out of the range of 2xx
+        console.log(error.response.data);
+        console.log(error.response.status);
+        console.log(error.response.headers);
+      } else if (error.request) {
+        // The request was made but no response was received
+        // `error.request` is an instance of XMLHttpRequest in the browser and an instance of
+        // http.ClientRequest in node.js
+        console.log(error.request);
+        return error.response.status;
+      } else {
+        // Something happened in setting up the request that triggered an Error
+        console.log("Error", error.message);
+        return 500;
+      }
+    });
 }
 
 async function ornamentIssuePrePruneMap(issue) {
@@ -157,38 +179,53 @@ async function getReportData() {
 }
 
 app.get("/", async (req, res) => {
-  const reportData = await getReportData();
+  const ghRateLimitStatus = await issuesHelpers.getGHApiRateLimitRemaining();
 
-  res.render("report", reportData);
+  if (ghRateLimitStatus == 200) {
+    if (webReportEnabled === "true") {
+      const reportData = await getReportData();
 
-  issuesHelpers.printGHApiCountUsed();
+      res.status(200).render("report", reportData);
+
+      issuesHelpers.printGHApiCountUsed();
+    } else {
+      console.log("Web report is disabled.  Try email.");
+      res.status(200).send("Web report is disabled.  Try email.");
+    }
+  } else {
+    console.log(`Error: status ${ghRateLimitStatus}`);
+  }
 });
 
 app.get("/email", async (req, res) => {
-  const reportData = await getReportData();
+  const ghRateLimitStatus = await issuesHelpers.getGHApiRateLimitRemaining();
 
-  mailer
-    .send({
-      from: mailFrom,
-      to: mailTo,
-      subject: `${reportData.title} for ${reportData.project}`,
-      template: __dirname + "/views/report.pug",
-      data: reportData
-    })
-    .then(response => {
-      console.log("Email Successfully Sent!");
-      res.status(200).send("Email Successfully Sent!");
-    })
-    .catch(err => {
-      console.log("Something went wrong!  Email not sent.");
-      console.log(err);
-      res.status(500).send("Something went wrong!  Email not sent.");
-    });
+  if (ghRateLimitStatus == 200) {
+    const reportData = await getReportData();
 
-  issuesHelpers.printGHApiCountUsed();
+    mailer
+      .send({
+        from: mailFrom,
+        to: mailTo,
+        subject: `${reportData.title} for ${reportData.project}`,
+        template: __dirname + "/views/report.pug",
+        data: reportData
+      })
+      .then(response => {
+        console.log("Email Successfully Sent!");
+        res.status(200).send("Email Successfully Sent!");
+      })
+      .catch(err => {
+        console.log("Something went wrong!  Email not sent.");
+        console.log(err);
+        res.status(500).send("Something went wrong!  Email not sent.");
+      });
+
+    issuesHelpers.printGHApiCountUsed();
+  } else {
+    console.log(`Error: status ${ghRateLimitStatus}`);
+  }
 });
 
 app.listen(3000);
 console.log("listening on port 3000...");
-
-issuesHelpers.getGHApiRateLimitRemaining();

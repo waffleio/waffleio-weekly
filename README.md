@@ -21,24 +21,22 @@ Queries the Waffle.io and GitHub APIs for status of GitHub project(s) included i
 ## Usage
 
 1. Clone this repo locally.
-2. Create a `dev` file in the root of this project with the following contents and update with the Waffle.io API Key:
+2. Create a `.env` file in the root of this project with the following contents and update with the Waffle.io API Key:
 
 ```
-export waffleApiSecret='123456'
+waffleApiSecret='123456'
 
-export ghApiToken='123456'
+ghApiToken='123456'
 
-export mailgunUser='123456'
-export mailgunPass='123456'
-export mailgunFrom='person@example.com'
-export mailgunTo='person1@example.com,person2@example.com'
+mailgunUser='123456'
+mailgunPass='123456'
+mailgunFrom='person@example.com'
+mailgunTo='person1@example.com,person2@example.com'
 
-export waffleProject='owner/project'
-export inProgressLabels='planned|in progress|needs review|deploying|'
+waffleProject='owner/project'
+inProgressLabels='planned|in progress|needs review|deploying|'
 
-export daysToReport=7
-
-node app.js
+daysToReport=7
 ```
 
 3. Run `npm install` to install dependencies.
@@ -47,7 +45,7 @@ node app.js
 
 Optionally
 
-- Run `nodemon --exec "bash dev"` to automatically restart the project when changes are made.
+- Run `nodemon start` to automatically restart the project when changes are made.
 - Run `npm test` to run Jest tests in `--watch` mode.
 
 ### Explanation of Environment Variables
