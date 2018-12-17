@@ -18,6 +18,7 @@
   },
   "homepage": "https://github.com/adamzolyak/wafflebotimpact#readme",
   "dependencies": {
+    "@octokit/rest": "^16.2.0",
     "axios": "^0.18.0",
     "dotenv": "^6.2.0",
     "express": "^4.16.4",
